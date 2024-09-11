@@ -1,1 +1,1 @@
-# MEMORY GYM made by BrainFreeze
+# MEMORY GYM by BrainFreeze

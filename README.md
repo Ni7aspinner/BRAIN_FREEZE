@@ -20,3 +20,31 @@
 
 List may be edited as needed :)
 
+## Steps to Launch the App
+
+- Prerequisite: ensure you have **Node.js** installed on your system. If not, download it from [nodejs.org](https://nodejs.org/).
+
+### 1. Install Dependencies
+
+```bash
+npm install
+```
+
+### 2. Launch the Vite Development Server
+
+```bash
+npm run dev
+```
+
+### 3. Access the App in Your Browser
+After running the command, you will see output similar to:
+
+```bash
+  VITE v5.4.5  ready in 516 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+```
+Open your web browser and go to the URL shown in the output (in this case, http://localhost:5173).
+
+

@@ -1,7 +1,7 @@
 function Footer() {
     return(
         <footer>
-            <p>&copy; {new Date().getFullYear()} MEMORY GYM by BrainFreeze</p>
+            <p>&copy; {new Date().getFullYear()} 🧊MEMORY GYM by BrainFreeze🧊</p>
         </footer>
     );
 

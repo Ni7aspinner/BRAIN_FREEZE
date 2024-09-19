@@ -1,0 +1,2 @@
+C:\Users\nikit\Desktop\test\ReactApp1\reactapp1.client\obj\Debug\client.esproj.CoreCompileInputs.cache
+C:\Users\nikit\Desktop\test\ReactApp1\client\obj\Debug\client.esproj.CoreCompileInputs.cache

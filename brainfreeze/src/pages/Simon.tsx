@@ -4,7 +4,7 @@ import Keypad from '../assets/keypad.png';
 import Follow from '../assets/follow.png';
 
 function Simon() {
-  const [flashingButtons, setFlashingButtons] = useState(Array(9).fill(false)); // Track flashing state for each button
+  const [flashingButtons, setFlashingButtons] = useState(Array(9).fill(false));
 
   const buttonPositions = [
     { top: '40%', left: '28.5%' },

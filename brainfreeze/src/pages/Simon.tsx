@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './Simon.css';
-import Keypad from '../assets/keypad.png';
-import Follow from '../assets/follow.png';
+import Keypad from '../assets/Keypad.png';
+import Follow from '../assets/Follow.png';
 
 function Simon() {
   const [flashingButtons, setFlashingButtons] = useState(Array(9).fill(false));

@@ -8,10 +8,6 @@
     height: 20em;
     padding: 1.5em;
   }
-  .experiment-text {
-    color: #ffffff;
-    font-size: small;
-  }
   .image-container {
     position: relative;
     display: inline-block;

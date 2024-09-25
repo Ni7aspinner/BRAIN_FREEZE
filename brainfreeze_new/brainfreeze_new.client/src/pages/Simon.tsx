@@ -1,9 +1,23 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './Simon.css';
 import Keypad from '../assets/keypad.png';
 import Follow from '../assets/follow.png';
-
+interface Data {
+    number: number; 
+}
 function Simon() {
+  const [datas, setData] = useState<Data[] | undefined>(undefined);
+  const [dataString, setDataString] = useState<string>(''); 
+
+  useEffect(() => {
+      populateData();
+  }, []);
+
+  const contents = datas === undefined
+      ? <p><em>Loading... Please refresh once the ASP.NET backend has started. See <a href="https://aka.ms/jspsintegrationreact">https://aka.ms/jspsintegrationreact</a> for more details.</em></p>
+      : <div>{dataString}</div>; 
+
+
     const [flashingButtons, setFlashingButtons] = useState(Array(9).fill(false));
 
     const buttonPositions = [
@@ -18,6 +32,19 @@ function Simon() {
         { top: '77.5%', left: '71%' },
     ];
 
+    const handleArray = () => {
+      if (datas && datas.length >= 12) {
+      for(let i=0; i<datas.length; i++)
+      {
+        setTimeout(() => { handleFlash(datas[i].number);}, i*400);
+      }
+      setTimeout(() => {
+        fetch('https://localhost:5276/api/buttonpress');
+    }, 12 * 400);
+    } else{
+      console.error("Datas is either undefined or doesn't have enough elements");
+    }
+  };
     const handleFlash = (index: number) => {
         setFlashingButtons((prev) => {
             const newState = [...prev];
@@ -61,9 +88,24 @@ function Simon() {
           >
           </button>
         ))}
-      </div>
+          </div>
+          <div>
+              {contents}
+              <button onClick={() => handleArray()}></button>
+          </div>
     </>
   );
+  async function populateData() {
+    try {
+        const response = await fetch('/Inc');
+        const data: Data[] = await response.json(); 
+        setData(data); 
+        const dataString = data.map(item => item.number).join(', '); 
+        setDataString(dataString);
+    } catch (error) {
+        console.error("Failed to fetch data", error);
+    }
+  }
 }
 
 export default Simon;

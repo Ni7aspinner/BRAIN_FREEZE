@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\3n\\Documents\\Kodavimas)\\memory_gym\\BRAIN_FREEZE\\brainfreeze_new\\brainfreeze_new.Server\\brainfreeze_new.Server.csproj": {}
+    "C:\\Users\\nikit\\Desktop\\BRAIN_FREEZE\\brainfreeze_new\\brainfreeze_new.Server\\brainfreeze_new.Server.csproj": {}
   },
   "projects": {
-    "C:\\Users\\3n\\Documents\\Kodavimas)\\memory_gym\\BRAIN_FREEZE\\brainfreeze_new\\brainfreeze_new.Server\\brainfreeze_new.Server.csproj": {
+    "C:\\Users\\nikit\\Desktop\\BRAIN_FREEZE\\brainfreeze_new\\brainfreeze_new.Server\\brainfreeze_new.Server.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\3n\\Documents\\Kodavimas)\\memory_gym\\BRAIN_FREEZE\\brainfreeze_new\\brainfreeze_new.Server\\brainfreeze_new.Server.csproj",
+        "projectUniqueName": "C:\\Users\\nikit\\Desktop\\BRAIN_FREEZE\\brainfreeze_new\\brainfreeze_new.Server\\brainfreeze_new.Server.csproj",
         "projectName": "brainfreeze_new.Server",
-        "projectPath": "C:\\Users\\3n\\Documents\\Kodavimas)\\memory_gym\\BRAIN_FREEZE\\brainfreeze_new\\brainfreeze_new.Server\\brainfreeze_new.Server.csproj",
-        "packagesPath": "C:\\Users\\3n\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\3n\\Documents\\Kodavimas)\\memory_gym\\BRAIN_FREEZE\\brainfreeze_new\\brainfreeze_new.Server\\obj\\",
+        "projectPath": "C:\\Users\\nikit\\Desktop\\BRAIN_FREEZE\\brainfreeze_new\\brainfreeze_new.Server\\brainfreeze_new.Server.csproj",
+        "packagesPath": "C:\\Users\\nikit\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\nikit\\Desktop\\BRAIN_FREEZE\\brainfreeze_new\\brainfreeze_new.Server\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\3n\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\nikit\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -26,7 +26,6 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -78,7 +77,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.400/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.204/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

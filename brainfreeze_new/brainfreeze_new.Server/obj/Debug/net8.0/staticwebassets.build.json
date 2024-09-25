@@ -1,13 +1,13 @@
 {
   "Version": 1,
-  "Hash": "4oHLlFcjGfx0Zdl9ceoVtFK/Z9l+nFH8eCBZkUpYP4M=",
+  "Hash": "5tl1eV9W1TPubywGittgy/QpwA5a3Xino9HP2C2Ig1A=",
   "Source": "brainfreeze_new.Server",
   "BasePath": "_content/brainfreeze_new.Server",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [
     {
-      "Identity": "C:\\Users\\3n\\Documents\\Kodavimas)\\memory_gym\\BRAIN_FREEZE\\brainfreeze_new\\brainfreeze_new.client\\brainfreeze_new.client.esproj",
+      "Identity": "C:\\Users\\nikit\\Desktop\\BRAIN_FREEZE\\brainfreeze_new\\brainfreeze_new.client\\brainfreeze_new.client.esproj",
       "Version": 2,
       "Source": "brainfreeze_new.client",
       "GetPublishAssetsTargets": "GetCurrentProjectPublishStaticWebAssetItems",

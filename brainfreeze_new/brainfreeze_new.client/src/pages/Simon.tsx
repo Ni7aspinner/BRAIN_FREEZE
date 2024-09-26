@@ -36,7 +36,7 @@ function Simon() {
       if (datas && datas.length >= 12) {
       for(let i=0; i<datas.length; i++)
       {
-        setTimeout(() => { handleFlash(datas[i].number);}, i*400);
+        setTimeout(() => { handleFlash(datas[i].number-1);}, i*400);
       }
       setTimeout(() => {
         fetch('https://localhost:5276/api/buttonpress');
@@ -72,7 +72,6 @@ function Simon() {
             key={index}
             className={`image-button ${flashingButtons[index] ? 'flashing' : ''}`}
             style={{ top: pos.top, left: pos.left, width: '50px', height: '50px' }}
-            onClick={() => handleFlash(index)}
           >
           </button>
         ))}

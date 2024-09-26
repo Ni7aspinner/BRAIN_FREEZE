@@ -19,7 +19,7 @@ namespace brainfreeze_new.Server.Controllers
         {
             return Enumerable.Range(1, 12).Select(index => new Data
             {
-                number = Random.Shared.Next(1, 9)
+                number = Random.Shared.Next(1, 10)
             })
             .ToArray();
         }

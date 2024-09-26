@@ -3,7 +3,7 @@
 "ServerUrl": "https://localhost:5173",
 "RedirectUrl": "",
 "LaunchCommand": "npm run dev",
-"WorkingDirectory": "C:\\Users\\nikit\\Desktop\\BRAIN_FREEZE\\brainfreeze_new\\brainfreeze_new.Server\\..\\brainfreeze_new.client",
+"WorkingDirectory": "C:\\Users\\user1\\Documents\\2Kursas\\PS\\BRAIN_FREEZE\\brainfreeze_new\\brainfreeze_new.Server\\..\\brainfreeze_new.client",
 "MaxTimeoutInSeconds": "120",
 "KeepRunning": "false"
 }

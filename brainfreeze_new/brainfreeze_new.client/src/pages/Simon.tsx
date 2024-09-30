@@ -60,8 +60,30 @@ function Simon() {
             });
         }, 200);
 
-        fetch('https://localhost:5276/api/buttonpress')
+        //fetch('https://localhost:5276/api/buttonpress')
     };
+    
+    async function fetchData(buttonData: { buttonId: number; timestamp: string; }) {
+        //console.log("Sending button data:", buttonData);
+        try {
+            const response = await fetch('https://localhost:5219/api/button', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(buttonData),
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                console.log('API response: ', result);
+            } else {
+                console.error('Error in API request: ', response.statusText);
+            }
+        } catch (error) {
+            console.error("Failed to fetch data", error);
+        }
+    }
 
   return (
     <>
@@ -80,10 +102,18 @@ function Simon() {
         <img src={Keypad} alt="Keypad Image" className="image" />
         {buttonPositions.map((pos, index) => (
           <button
-            key={index}
-            className="image-button"
-            style={{ top: pos.top, left: pos.left, width: '50px', height: '50px' }}
-            onClick={() => handleFlash(index)}
+                key={index}
+                className="image-button"
+                style={{ top: pos.top, left: pos.left, width: '50px', height: '50px' }}
+                onClick={() => {
+                    const buttonData = {
+                        buttonId: index + 1,
+                        timestamp: new Date().toISOString(),
+                    }
+
+                    handleFlash(index);
+                    fetchData(buttonData)
+                }}
           >
           </button>
         ))}
@@ -94,17 +124,17 @@ function Simon() {
           </div>
     </>
   );
-  async function populateData() {
-    try {
-        const response = await fetch('/Inc');
-        const data: Data[] = await response.json(); 
-        setData(data); 
-        const dataString = data.map(item => item.number).join(', '); 
-        setDataString(dataString);
-    } catch (error) {
-        console.error("Failed to fetch data", error);
+    async function populateData() {
+        try {
+            const response = await fetch('/Inc');
+            const data: Data[] = await response.json();
+            setData(data);
+            const dataString = data.map(item => item.number).join(', ');
+            setDataString(dataString);
+        } catch (error) {
+            console.error("Failed to fetch data", error);
+        }
     }
-  }
 }
 
 export default Simon;

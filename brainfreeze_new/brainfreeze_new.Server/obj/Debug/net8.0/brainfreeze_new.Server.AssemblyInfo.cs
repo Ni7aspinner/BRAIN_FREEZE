@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("brainfreeze_new.Server")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b48eee86b8d3af90fa7939a24a83c6c6f4f7449e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fe5c51a87be684f8e18100f080e2a4b307519061")]
 [assembly: System.Reflection.AssemblyProductAttribute("brainfreeze_new.Server")]
 [assembly: System.Reflection.AssemblyTitleAttribute("brainfreeze_new.Server")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

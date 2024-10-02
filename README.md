@@ -47,4 +47,9 @@ After running the command, you will see output similar to:
 ```
 Open your web browser and go to the URL shown in the output (in this case, http://localhost:5173).
 
-
+## Guidelines for Collaboration
+1. Create a new issue.
+2. Write a brief description.
+3. Assign labels.
+4. Create a new branch from the issue.
+5. Commit the changes and make a Pull Request.

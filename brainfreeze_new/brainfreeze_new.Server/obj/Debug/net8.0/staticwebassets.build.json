@@ -1,13 +1,13 @@
 {
   "Version": 1,
-  "Hash": "gqjlrdN7pkHCMhI54ix/d818EeCsxLtSVVUkiyTeVuk=",
+  "Hash": "6p2XPxmQeZBiQnxvHjhVSsxJjIVBOOwEuPDJMRi0kYo=",
   "Source": "brainfreeze_new.Server",
   "BasePath": "_content/brainfreeze_new.Server",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [
     {
-      "Identity": "C:\\Users\\nikit\\Desktop\\test\\BRAIN_FREEZE\\brainfreeze_new\\brainfreeze_new.client\\brainfreeze_new.client.esproj",
+      "Identity": "D:\\Documents\\2Kursas\\PS\\brainfreeze_new\\brainfreeze_new.client\\brainfreeze_new.client.esproj",
       "Version": 2,
       "Source": "brainfreeze_new.client",
       "GetPublishAssetsTargets": "GetCurrentProjectPublishStaticWebAssetItems",

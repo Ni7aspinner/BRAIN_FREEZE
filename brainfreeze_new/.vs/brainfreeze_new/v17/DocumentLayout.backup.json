@@ -1,30 +1,14 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\nikit\\Desktop\\BRAIN_FREEZE\\brainfreeze_new\\",
+  "WorkspaceRootPath": "D:\\Documents\\2Kursas\\PS\\brainfreeze_new\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{80C5D8ED-DBF2-4418-8438-1223130BEE23}|brainfreeze_new.Server\\brainfreeze_new.Server.csproj|c:\\users\\nikit\\desktop\\brain_freeze\\brainfreeze_new\\brainfreeze_new.server\\controllers\\datacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{80C5D8ED-DBF2-4418-8438-1223130BEE23}|brainfreeze_new.Server\\brainfreeze_new.Server.csproj|d:\\documents\\2kursas\\ps\\brainfreeze_new\\brainfreeze_new.server\\controllers\\newsession.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{80C5D8ED-DBF2-4418-8438-1223130BEE23}|brainfreeze_new.Server\\brainfreeze_new.Server.csproj|solutionrelative:brainfreeze_new.server\\controllers\\newsession.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{80C5D8ED-DBF2-4418-8438-1223130BEE23}|brainfreeze_new.Server\\brainfreeze_new.Server.csproj|d:\\documents\\2kursas\\ps\\brainfreeze_new\\brainfreeze_new.server\\controllers\\datacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{80C5D8ED-DBF2-4418-8438-1223130BEE23}|brainfreeze_new.Server\\brainfreeze_new.Server.csproj|solutionrelative:brainfreeze_new.server\\controllers\\datacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{80C5D8ED-DBF2-4418-8438-1223130BEE23}|brainfreeze_new.Server\\brainfreeze_new.Server.csproj|c:\\users\\nikit\\desktop\\brain_freeze\\brainfreeze_new\\brainfreeze_new.server\\buttondata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{80C5D8ED-DBF2-4418-8438-1223130BEE23}|brainfreeze_new.Server\\brainfreeze_new.Server.csproj|solutionrelative:brainfreeze_new.server\\buttondata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{80C5D8ED-DBF2-4418-8438-1223130BEE23}|brainfreeze_new.Server\\brainfreeze_new.Server.csproj|c:\\users\\nikit\\desktop\\brain_freeze\\brainfreeze_new\\brainfreeze_new.server\\data.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{80C5D8ED-DBF2-4418-8438-1223130BEE23}|brainfreeze_new.Server\\brainfreeze_new.Server.csproj|solutionrelative:brainfreeze_new.server\\data.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{80C5D8ED-DBF2-4418-8438-1223130BEE23}|brainfreeze_new.Server\\brainfreeze_new.Server.csproj|c:\\users\\nikit\\desktop\\brain_freeze\\brainfreeze_new\\brainfreeze_new.server\\brainfreeze_new.server.http||{5703B403-55E7-4C63-8C88-A8F52C7A45C5}",
-      "RelativeMoniker": "D:0:0:{80C5D8ED-DBF2-4418-8438-1223130BEE23}|brainfreeze_new.Server\\brainfreeze_new.Server.csproj|solutionrelative:brainfreeze_new.server\\brainfreeze_new.server.http||{5703B403-55E7-4C63-8C88-A8F52C7A45C5}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{80C5D8ED-DBF2-4418-8438-1223130BEE23}|brainfreeze_new.Server\\brainfreeze_new.Server.csproj|c:\\users\\nikit\\desktop\\brain_freeze\\brainfreeze_new\\brainfreeze_new.server\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{80C5D8ED-DBF2-4418-8438-1223130BEE23}|brainfreeze_new.Server\\brainfreeze_new.Server.csproj|solutionrelative:brainfreeze_new.server\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F0DB6258-FF90-4E66-9E32-BA3F85EB161D}|brainfreeze_new.client\\brainfreeze_new.client.esproj|c:\\users\\nikit\\desktop\\brain_freeze\\brainfreeze_new\\brainfreeze_new.client\\package-lock.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{F0DB6258-FF90-4E66-9E32-BA3F85EB161D}|brainfreeze_new.client\\brainfreeze_new.client.esproj|solutionrelative:brainfreeze_new.client\\package-lock.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     }
   ],
   "DocumentGroupContainers": [
@@ -34,84 +18,33 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 5,
+          "SelectedChildIndex": 1,
           "Children": [
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\nikit\\Desktop\\BRAIN_FREEZE\\brainfreeze_new\\brainfreeze_new.Server\\Program.cs",
-              "RelativeDocumentMoniker": "brainfreeze_new.Server\\Program.cs",
-              "ToolTip": "C:\\Users\\nikit\\Desktop\\BRAIN_FREEZE\\brainfreeze_new\\brainfreeze_new.Server\\Program.cs",
-              "RelativeToolTip": "brainfreeze_new.Server\\Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACEAAAAIAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-30T21:40:43.592Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "package-lock.json",
-              "DocumentMoniker": "C:\\Users\\nikit\\Desktop\\BRAIN_FREEZE\\brainfreeze_new\\brainfreeze_new.client\\package-lock.json",
-              "RelativeDocumentMoniker": "brainfreeze_new.client\\package-lock.json",
-              "ToolTip": "C:\\Users\\nikit\\Desktop\\BRAIN_FREEZE\\brainfreeze_new\\brainfreeze_new.client\\package-lock.json",
-              "RelativeToolTip": "brainfreeze_new.client\\package-lock.json",
-              "ViewState": "AgIAAGoHAAAAAAAAAADwv3sJAAAVAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2024-09-30T19:53:20.852Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "Data.cs",
-              "DocumentMoniker": "C:\\Users\\nikit\\Desktop\\BRAIN_FREEZE\\brainfreeze_new\\brainfreeze_new.Server\\Data.cs",
-              "RelativeDocumentMoniker": "brainfreeze_new.Server\\Data.cs",
-              "ToolTip": "C:\\Users\\nikit\\Desktop\\BRAIN_FREEZE\\brainfreeze_new\\brainfreeze_new.Server\\Data.cs",
-              "RelativeToolTip": "brainfreeze_new.Server\\Data.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAmAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-30T18:55:58.969Z"
-            },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "ButtonData.cs",
-              "DocumentMoniker": "C:\\Users\\nikit\\Desktop\\BRAIN_FREEZE\\brainfreeze_new\\brainfreeze_new.Server\\ButtonData.cs",
-              "RelativeDocumentMoniker": "brainfreeze_new.Server\\ButtonData.cs",
-              "ToolTip": "C:\\Users\\nikit\\Desktop\\BRAIN_FREEZE\\brainfreeze_new\\brainfreeze_new.Server\\ButtonData.cs",
-              "RelativeToolTip": "brainfreeze_new.Server\\ButtonData.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAApAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-30T19:31:39.743Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
               "Title": "DataController.cs",
-              "DocumentMoniker": "C:\\Users\\nikit\\Desktop\\BRAIN_FREEZE\\brainfreeze_new\\brainfreeze_new.Server\\Controllers\\DataController.cs",
+              "DocumentMoniker": "D:\\Documents\\2Kursas\\PS\\brainfreeze_new\\brainfreeze_new.Server\\Controllers\\DataController.cs",
               "RelativeDocumentMoniker": "brainfreeze_new.Server\\Controllers\\DataController.cs",
-              "ToolTip": "C:\\Users\\nikit\\Desktop\\BRAIN_FREEZE\\brainfreeze_new\\brainfreeze_new.Server\\Controllers\\DataController.cs",
+              "ToolTip": "D:\\Documents\\2Kursas\\PS\\brainfreeze_new\\brainfreeze_new.Server\\Controllers\\DataController.cs",
               "RelativeToolTip": "brainfreeze_new.Server\\Controllers\\DataController.cs",
-              "ViewState": "AgIAAAMAAAAAAAAAAAAcwA0AAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-26T11:20:02.766Z",
+              "WhenOpened": "2024-10-02T18:08:43.834Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "brainfreeze_new.Server.http",
-              "DocumentMoniker": "C:\\Users\\nikit\\Desktop\\BRAIN_FREEZE\\brainfreeze_new\\brainfreeze_new.Server\\brainfreeze_new.Server.http",
-              "RelativeDocumentMoniker": "brainfreeze_new.Server\\brainfreeze_new.Server.http",
-              "ToolTip": "C:\\Users\\nikit\\Desktop\\BRAIN_FREEZE\\brainfreeze_new\\brainfreeze_new.Server\\brainfreeze_new.Server.http",
-              "RelativeToolTip": "brainfreeze_new.Server\\brainfreeze_new.Server.http",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAYAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003502|",
-              "WhenOpened": "2024-10-01T16:57:56.054Z"
+              "DocumentIndex": 0,
+              "Title": "NewSession.cs",
+              "DocumentMoniker": "D:\\Documents\\2Kursas\\PS\\brainfreeze_new\\brainfreeze_new.Server\\Controllers\\NewSession.cs",
+              "RelativeDocumentMoniker": "brainfreeze_new.Server\\Controllers\\NewSession.cs",
+              "ToolTip": "D:\\Documents\\2Kursas\\PS\\brainfreeze_new\\brainfreeze_new.Server\\Controllers\\NewSession.cs",
+              "RelativeToolTip": "brainfreeze_new.Server\\Controllers\\NewSession.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAvAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-02T18:03:32.581Z",
+              "EditorCaption": ""
             }
           ]
         }

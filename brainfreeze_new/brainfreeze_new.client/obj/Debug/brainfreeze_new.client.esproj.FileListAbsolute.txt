@@ -2,3 +2,4 @@ C:\Users\3n\Documents\Kodavimas)\memory_gym\BRAIN_FREEZE\brainfreeze_new\brainfr
 C:\Users\nikit\Desktop\BRAIN_FREEZE\brainfreeze_new\brainfreeze_new.client\obj\Debug\brainfreeze_new.client.esproj.CoreCompileInputs.cache
 C:\Users\user1\Documents\2Kursas\PS\BRAIN_FREEZE\brainfreeze_new\brainfreeze_new.client\obj\Debug\brainfreeze_new.client.esproj.CoreCompileInputs.cache
 C:\Users\nikit\Desktop\test\BRAIN_FREEZE\brainfreeze_new\brainfreeze_new.client\obj\Debug\brainfreeze_new.client.esproj.CoreCompileInputs.cache
+D:\Documents\2Kursas\PS\brainfreeze_new\brainfreeze_new.client\obj\Debug\brainfreeze_new.client.esproj.CoreCompileInputs.cache

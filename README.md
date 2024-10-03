@@ -53,5 +53,3 @@ Open your web browser and go to the URL shown in the output (in this case, http:
 3. Assign labels.
 4. Create a new branch from the issue.
 5. Commit the changes and make a Pull Request.
-
-

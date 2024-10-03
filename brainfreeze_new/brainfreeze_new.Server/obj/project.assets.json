@@ -459,19 +459,24 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\user1\\.nuget\\packages\\": {}
+    "C:\\Users\\pvls9\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\user1\\Documents\\2Kursas\\PS\\BRAIN_FREEZE\\brainfreeze_new\\brainfreeze_new.Server\\brainfreeze_new.Server.csproj",
+      "projectUniqueName": "D:\\Documents\\2Kursas\\PS\\brainfreeze_new\\brainfreeze_new.Server\\brainfreeze_new.Server.csproj",
       "projectName": "brainfreeze_new.Server",
-      "projectPath": "C:\\Users\\user1\\Documents\\2Kursas\\PS\\BRAIN_FREEZE\\brainfreeze_new\\brainfreeze_new.Server\\brainfreeze_new.Server.csproj",
-      "packagesPath": "C:\\Users\\user1\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\user1\\Documents\\2Kursas\\PS\\BRAIN_FREEZE\\brainfreeze_new\\brainfreeze_new.Server\\obj\\",
+      "projectPath": "D:\\Documents\\2Kursas\\PS\\brainfreeze_new\\brainfreeze_new.Server\\brainfreeze_new.Server.csproj",
+      "packagesPath": "C:\\Users\\pvls9\\.nuget\\packages\\",
+      "outputPath": "D:\\Documents\\2Kursas\\PS\\brainfreeze_new\\brainfreeze_new.Server\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "C:\\Users\\user1\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\pvls9\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [

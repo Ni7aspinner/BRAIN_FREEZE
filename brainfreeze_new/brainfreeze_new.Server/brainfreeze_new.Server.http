@@ -1,6 +1,9 @@
 @brainfreeze_new.Server_HostAddress = http://localhost:5219
 
-GET {{brainfreeze_new.Server_HostAddress}}/data/
+### GET Request
+GET {{brainfreeze_new.Server_HostAddress}}/api/Inc
 Accept: application/json
 
-###
+### POST Request
+POST {{brainfreeze_new.Server_HostAddress}}/api/Inc
+Accept: application/json

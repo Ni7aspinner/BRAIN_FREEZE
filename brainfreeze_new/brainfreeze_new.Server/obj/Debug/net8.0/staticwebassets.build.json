@@ -1,0 +1,23 @@
+{
+  "Version": 1,
+  "Hash": "6p2XPxmQeZBiQnxvHjhVSsxJjIVBOOwEuPDJMRi0kYo=",
+  "Source": "brainfreeze_new.Server",
+  "BasePath": "_content/brainfreeze_new.Server",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [
+    {
+      "Identity": "D:\\Documents\\2Kursas\\PS\\brainfreeze_new\\brainfreeze_new.client\\brainfreeze_new.client.esproj",
+      "Version": 2,
+      "Source": "brainfreeze_new.client",
+      "GetPublishAssetsTargets": "GetCurrentProjectPublishStaticWebAssetItems",
+      "AdditionalPublishProperties": "Configuration=Debug;Platform=AnyCPU",
+      "AdditionalPublishPropertiesToRemove": "WebPublishProfileFile;TargetFramework;RuntimeIdentifier;SelfContained",
+      "GetBuildAssetsTargets": "GetCurrentProjectBuildStaticWebAssetItems",
+      "AdditionalBuildProperties": "Configuration=Debug;Platform=AnyCPU",
+      "AdditionalBuildPropertiesToRemove": "WebPublishProfileFile;TargetFramework;RuntimeIdentifier;SelfContained"
+    }
+  ],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

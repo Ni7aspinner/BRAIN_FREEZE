@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\brainfreeze_new.Server.props" />
+</Project>

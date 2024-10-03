@@ -30,7 +30,7 @@ namespace brainfreeze_new.Server.Controllers
         public ActionResult<Data> Add([FromBody] Data sequence)
         {
             Console.WriteLine($"Sent back data:\nArray size: {sequence.expectedList.Count}");
-            if (sequence == null || sequence.createdList == null || sequence.expectedList == null || sequence.expectedList.Count != sequence.createdList.Count)
+            if (sequence is null || sequence.createdList is null || sequence.expectedList is null || sequence.expectedList.Count != sequence.createdList.Count)
             {
                 return BadRequest("Invalid data");
             }

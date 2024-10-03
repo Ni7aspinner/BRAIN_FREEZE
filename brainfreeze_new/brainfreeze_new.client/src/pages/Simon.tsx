@@ -150,7 +150,7 @@ function Simon() {
   }
 
   return (
-    <>
+    <><div>
       <div className="image-container">
         <img src={Follow} alt="Follow Image" className="image" />
         {buttonPositions.map((pos, index) => (
@@ -193,10 +193,12 @@ function Simon() {
           </button>
         ))}
           </div>
+     
           <div>
               {contents}
               <button onClick={() => handleArray()}></button>
           </div>
+      </div>
     </>
   );
 }

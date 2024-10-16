@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace brainfreeze_new.Server.Controllers
 {
@@ -20,7 +21,7 @@ namespace brainfreeze_new.Server.Controllers
             Data sequence = new Data();
             for (int i = 0; i < sequence.level; i++)
             {
-                sequence.createdList.Add(Random.Shared.Next(1, 10));
+                ModifyList(sequence);
             }
             return Ok(sequence);
         }
@@ -38,7 +39,7 @@ namespace brainfreeze_new.Server.Controllers
             {
                 sequence.expectedList.Clear();
                 sequence.level++;
-                sequence.createdList.Add(Random.Shared.Next(1, 10));
+                ModifyList(sequence);
                 return Ok(sequence);
             }
             else
@@ -46,21 +47,48 @@ namespace brainfreeze_new.Server.Controllers
                 Data newSequence = new Data();
                 for (int i = 0; i < newSequence.level; i++)
                 {
-                    newSequence.createdList.Add(Random.Shared.Next(1, 10));
+                    ModifyList(newSequence);
                 }
                 Console.WriteLine($"Returning new sequence");
                 return Ok(newSequence);
             }
         }
 
-        // Checks to see if the sequence is ok:)
-        private bool Check(Data sequence)
+        // Checks to see if the sequence is ok. Has to deserialize from json if we want
+        // to later use object to include also different types of information
+        static private bool Check(Data sequence)
         {
-            for (int i = 0; i < sequence.level; i++)
+
+            var createdListInts = sequence.createdList
+                .Select(item => item is JsonElement jsonElement ? jsonElement.GetInt32() : (int)item)
+                .ToList();
+
+            var expectedListInts = sequence.expectedList
+                .Select(item => item is JsonElement jsonElement ? jsonElement.GetInt32() : (int)item)
+                .ToList();
+
+            bool areEqual = createdListInts.SequenceEqual(expectedListInts);
+
+
+            Console.Write("CreatedList: ");
+            foreach (object item in sequence.createdList)
             {
-                if (sequence.createdList[i] != sequence.expectedList[i]) return false;
+                Console.Write(item + " ");
             }
-            return true;
+            Console.Write("\nExpectedList: ");
+            foreach (object item in sequence.expectedList)
+            {
+                Console.Write(item + " ");
+            }
+            Console.WriteLine($"\nLists are equal: {areEqual}");
+            return areEqual;
+        }
+
+        static private void ModifyList(Data sequence)
+        {
+            int createdNum = Random.Shared.Next(1, 10);
+            object o = createdNum;
+            sequence.createdList.Add(createdNum);
         }
     }
 }

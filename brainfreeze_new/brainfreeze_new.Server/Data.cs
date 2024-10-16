@@ -4,9 +4,9 @@ namespace brainfreeze_new.Server
 {
     public class Data
     { 
-        public List<int> createdList { get; set; } = new List<int>();
+        public List<object> createdList { get; set; } = new List<object>();
         public int level { get; set; } = 4;
-        public List<int> expectedList { get; set; } = new List<int>();
+        public List<object> expectedList { get; set; } = new List<object>();
 
     }
 

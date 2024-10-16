@@ -86,13 +86,16 @@ namespace brainfreeze_new.Server.Controllers
 
                 areEqual = createdListInts.SequenceEqual(expectedListInts);
 
+                //very random implementation of extension method. 
+                //in this case Words is extended with WordsExtended
+                Words words = new Words();
 
-                Console.Write("CreatedList: ");
+                Console.Write(words.Created());
                 foreach (object item in sequence.createdList)
                 {
-                    Console.Write(item + " ");
+                    Console.Write(item + words.Space());
                 }
-                Console.Write("\nExpectedList: ");
+                Console.Write(words.Expected());
                 foreach (object item in sequence.expectedList)
                 {
                     Console.Write(item + " ");

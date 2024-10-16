@@ -3,7 +3,7 @@
 "ServerUrl": "https://localhost:5173",
 "RedirectUrl": "",
 "LaunchCommand": "npm run dev",
-"WorkingDirectory": "C:\\Users\\nikit\\Desktop\\test\\ReactApp1\\Server\\..\\reactapp1.client",
+"WorkingDirectory": "/home/agne/Desktop/Programming/uni_psi1/BRAIN_FREEZE/app1/Server/../reactapp1.client",
 "MaxTimeoutInSeconds": "120",
 "KeepRunning": "false"
 }

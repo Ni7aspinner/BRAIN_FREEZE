@@ -1,20 +1,20 @@
 {
   "Version": 1,
-  "Hash": "gqjlrdN7pkHCMhI54ix/d818EeCsxLtSVVUkiyTeVuk=",
+  "Hash": "OhtaWx8Bmiz0Nha3pl80hryG24p9IqCdbp8mWlX35yg=",
   "Source": "brainfreeze_new.Server",
   "BasePath": "_content/brainfreeze_new.Server",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [
     {
-      "Identity": "C:\\Users\\nikit\\Desktop\\test\\BRAIN_FREEZE\\brainfreeze_new\\brainfreeze_new.client\\brainfreeze_new.client.esproj",
+      "Identity": "/home/agne/Desktop/Programming/uni_psi1/BRAIN_FREEZE/brainfreeze_new/brainfreeze_new.client/brainfreeze_new.client.esproj",
       "Version": 2,
       "Source": "brainfreeze_new.client",
       "GetPublishAssetsTargets": "GetCurrentProjectPublishStaticWebAssetItems",
-      "AdditionalPublishProperties": "Configuration=Debug;Platform=AnyCPU",
+      "AdditionalPublishProperties": "",
       "AdditionalPublishPropertiesToRemove": "WebPublishProfileFile;TargetFramework;RuntimeIdentifier;SelfContained",
       "GetBuildAssetsTargets": "GetCurrentProjectBuildStaticWebAssetItems",
-      "AdditionalBuildProperties": "Configuration=Debug;Platform=AnyCPU",
+      "AdditionalBuildProperties": "",
       "AdditionalBuildPropertiesToRemove": "WebPublishProfileFile;TargetFramework;RuntimeIdentifier;SelfContained"
     }
   ],

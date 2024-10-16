@@ -9,8 +9,8 @@ interface Data {
     expectedList: number[]; 
 }
 
-function Simon() {
 
+function Simon() {
   const [datas, setData] = useState<Data>();
   const [dataString1, setDataString1] = useState<string>(''); 
   const [dataString2, setDataString2] = useState<string>(''); 
@@ -76,7 +76,9 @@ function Simon() {
         if (!response.ok) {                                                                     // gal veliau prireiks darant logika
             throw new Error(`HTTP error! Status: ${response.status}`);
         }
-        const data: Data = await response.json();
+        const results = await response.json();
+        const data: Data = results.data;
+        console.log(results.message);
         setData(data);
         const dataString1 = data.createdList.join(', ');
         setDataString1(dataString1);
@@ -132,13 +134,16 @@ function Simon() {
       });
 
       if (response.ok) {
-      const result = await response.json();
+      const results = await response.json();
+      const result = results.data;
+      console.log(results.message);
       console.log('API response: ', result);
       setData(result);
       const dataString1 = result.createdList.join(', '); 
       setDataString1(dataString1); 
       const dataString2 = result.expectedList.join(', ');
       setDataString2(dataString2);
+
       }
       else {
         console.error('Error in API request: ', response.statusText);

@@ -13,82 +13,92 @@ namespace brainfreeze_new.Server.Controllers
         {
             _logger = logger;
         }
-
+        public record ResponseData(Data Data, string Message);
+        public enum DifficultyLevel
+        {
+            VeryEasy = 4,
+            Easy,
+            Normal,
+            Hard,
+            Nightmare,
+            Impossible
+        }
         // Generates and returns Data type object with a list of random integers
         [HttpGet(Name = "GetData")]
-        public ActionResult<Data> Get()
+        public ActionResult<Data> Get(DifficultyLevel level = DifficultyLevel.VeryEasy)
         {
             Data sequence = new Data();
-            for (int i = 0; i < sequence.level; i++)
+            for (int i = 0; i < (int)level; i++)
             {
-                ModifyList(sequence);
+                ModifyList(data: sequence);
             }
-            return Ok(sequence);
+            return Ok(new ResponseData(sequence, "Game started!"));
         }
 
         // Validates and processes received data
         [HttpPost(Name = "AddData")]
-        public ActionResult<Data> Add([FromBody] Data sequence)
+        public ActionResult<Data> Add([FromBody] Data sequence, DifficultyLevel level = DifficultyLevel.VeryEasy)
         {
             Console.WriteLine($"Sent back data:\nArray size: {sequence.expectedList.Count}");
             if (sequence is null || sequence.createdList is null || sequence.expectedList is null || sequence.expectedList.Count != sequence.createdList.Count)
             {
                 return BadRequest("Invalid data");
             }
-            if (Check(sequence))
+            if (new Check(sequence).areEqual)
             {
                 sequence.expectedList.Clear();
-                sequence.level++;
-                ModifyList(sequence);
-                return Ok(sequence);
+                ModifyList(data: sequence);
+                return Ok(new ResponseData(sequence,"Congrats player!"));
             }
             else
             {
                 Data newSequence = new Data();
-                for (int i = 0; i < newSequence.level; i++)
+                for (int i = 0; i < (int)level; i++)
                 {
-                    ModifyList(newSequence);
+                    ModifyList(data: newSequence);
                 }
                 Console.WriteLine($"Returning new sequence");
-                return Ok(newSequence);
+                return Ok(new ResponseData(newSequence, "Loser!"));
             }
+        }
+
+        static private void ModifyList(Data data)
+        {
+            int createdNum = Random.Shared.Next(1, 10);
+            object o = createdNum;
+            data.createdList.Add(createdNum);
         }
 
         // Checks to see if the sequence is ok. Has to deserialize from json if we want
         // to later use object to include also different types of information
-        static private bool Check(Data sequence)
+        public struct Check
         {
-
-            var createdListInts = sequence.createdList
-                .Select(item => item is JsonElement jsonElement ? jsonElement.GetInt32() : (int)item)
-                .ToList();
-
-            var expectedListInts = sequence.expectedList
-                .Select(item => item is JsonElement jsonElement ? jsonElement.GetInt32() : (int)item)
-                .ToList();
-
-            bool areEqual = createdListInts.SequenceEqual(expectedListInts);
-
-
-            Console.Write("CreatedList: ");
-            foreach (object item in sequence.createdList)
+           public bool areEqual { get; } = false;
+            public Check(Data sequence)
             {
-                Console.Write(item + " ");
-            }
-            Console.Write("\nExpectedList: ");
-            foreach (object item in sequence.expectedList)
-            {
-                Console.Write(item + " ");
-            }
-            Console.WriteLine($"\nLists are equal: {areEqual}");
-            return areEqual;
-        }
+                var createdListInts = sequence.createdList
+                    .Select(item => item is JsonElement jsonElement ? jsonElement.GetInt32() : (int)item)
+                    .ToList();
 
-        static private void ModifyList(Data sequence)
-        {
-            int createdNum = Random.Shared.Next(1, 10);
-            object o = createdNum;
-            sequence.createdList.Add(createdNum);
+                var expectedListInts = sequence.expectedList
+                    .Select(item => item is JsonElement jsonElement ? jsonElement.GetInt32() : (int)item)
+                    .ToList();
+
+                areEqual = createdListInts.SequenceEqual(expectedListInts);
+
+
+                Console.Write("CreatedList: ");
+                foreach (object item in sequence.createdList)
+                {
+                    Console.Write(item + " ");
+                }
+                Console.Write("\nExpectedList: ");
+                foreach (object item in sequence.expectedList)
+                {
+                    Console.Write(item + " ");
+                }
+                Console.WriteLine($"\nLists are equal: {areEqual}");
+            }
         }
     }
 }

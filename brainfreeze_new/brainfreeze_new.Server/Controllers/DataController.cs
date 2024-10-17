@@ -14,15 +14,6 @@ namespace brainfreeze_new.Server.Controllers
             _logger = logger;
         }
         public record ResponseData(Data Data, string Message);
-        public enum DifficultyLevel
-        {
-            VeryEasy = 4,
-            Easy,
-            Normal,
-            Hard,
-            Nightmare,
-            Impossible
-        }
         // Generates and returns Data type object with a list of random integers
         [HttpGet(Name = "GetData")]
         public ActionResult<Data> Get(DifficultyLevel level = DifficultyLevel.VeryEasy)
@@ -100,5 +91,14 @@ namespace brainfreeze_new.Server.Controllers
                 Console.WriteLine($"\nLists are equal: {areEqual}");
             }
         }
+    }
+    public enum DifficultyLevel
+    {
+        VeryEasy = 4,
+        Easy,
+        Normal,
+        Hard,
+        Nightmare,
+        Impossible
     }
 }

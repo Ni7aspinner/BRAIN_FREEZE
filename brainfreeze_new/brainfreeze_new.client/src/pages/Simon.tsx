@@ -220,15 +220,8 @@ function Simon() {
                     setData(updatedData);
                     const dataString2 = updatedData.expectedList.join(', ');
                     setDataString2(dataString2);
-                    if (updatedData.expectedList.length == datas.level) {
-                      postData(updatedData);  
-                      const updatedData1 = {
-                        ...datas,
-                        expectedList: [],  
-                      };
-                      evaluateScore(updatedData.createdList);
-                      setData(updatedData1);
-                    }
+                    postData(updatedData);  
+                    evaluateScore(updatedData.createdList);
                   }
                 }}
           >

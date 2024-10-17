@@ -31,15 +31,19 @@ namespace brainfreeze_new.Server.Controllers
         public ActionResult<Data> Add([FromBody] Data sequence, DifficultyLevel level = DifficultyLevel.VeryEasy)
         {
             Console.WriteLine($"Sent back data:\nArray size: {sequence.expectedList.Count}");
-            if (sequence is null || sequence.createdList is null || sequence.expectedList is null || sequence.expectedList.Count != sequence.createdList.Count)
+            if (sequence is null || sequence.createdList is null || sequence.expectedList is null)
             {
                 return BadRequest("Invalid data");
             }
-            if (new Check(sequence).areEqual)
+            if (shortCheck(sequence))
             {
-                sequence.expectedList.Clear();
-                ModifyList(data: sequence);
-                return Ok(new ResponseData(sequence,"Congrats player!"));
+                if(new Check(sequence).areEqual)
+                {
+                    sequence.expectedList.Clear();
+                    ModifyList(data: sequence);
+                    return Ok(new ResponseData(sequence, "Congrats player!"));
+                }
+                return Ok(new ResponseData(sequence, "Proceed"));
             }
             else
             {
@@ -60,6 +64,46 @@ namespace brainfreeze_new.Server.Controllers
             data.createdList.Add(createdNum);
         }
 
+        private bool shortCheck(Data sequence)
+        {
+            // Ensure both lists are of equal length or that createdList is longer than expectedList
+            if (sequence.createdList.Count < sequence.expectedList.Count)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < sequence.expectedList.Count; i++)
+            {
+                // Convert elements in both lists to integers using TryGetInt32
+                if (sequence.createdList[i] is JsonElement createdElement
+                    && sequence.expectedList[i] is JsonElement expectedElement)
+                {
+                    if (createdElement.ValueKind == JsonValueKind.Number
+                        && expectedElement.ValueKind == JsonValueKind.Number)
+                    {
+                        int createdInt = createdElement.GetInt32();
+                        int expectedInt = expectedElement.GetInt32();
+
+                        // Compare the two integers
+                        if (createdInt != expectedInt) return false;
+                    }
+                    else
+                    {
+                        // If either is not a number, return false
+                        return false;
+                    }
+                }
+                else
+                {
+                    // If either element is not a JsonElement, return false
+                    return false;
+                }
+            }
+
+            // Return true if all comparisons passed
+            return true;
+        }
+
         // Checks to see if the sequence is ok. Has to deserialize from json if we want
         // to later use object to include also different types of information
         public struct Check
@@ -75,7 +119,7 @@ namespace brainfreeze_new.Server.Controllers
                     .Select(item => item is JsonElement jsonElement ? jsonElement.GetInt32() : (int)item)
                     .ToList();
 
-                areEqual = createdListInts.SequenceEqual(expectedListInts);
+                    areEqual = createdListInts.SequenceEqual(expectedListInts);
 
                 //very random implementation of extension method. 
                 //in this case Words is extended with WordsExtended
@@ -95,6 +139,7 @@ namespace brainfreeze_new.Server.Controllers
             }
         }
     }
+
     public enum DifficultyLevel
     {
         VeryEasy = 4,

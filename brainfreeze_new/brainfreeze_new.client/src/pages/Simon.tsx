@@ -15,6 +15,7 @@ function Simon() {
   const [dataString1, setDataString1] = useState<string>(''); 
   const [dataString2, setDataString2] = useState<string>(''); 
   const [flashingButtons, setFlashingButtons] = useState(Array(9).fill(false));
+
   const contents = datas === undefined
       ? <p><em>Loading... Please refresh once the ASP.NET backend has started. See <a href="https://aka.ms/jspsintegrationreact">https://aka.ms/jspsintegrationreact</a> for more details.</em></p>
       : (<div><div></div>Game id: {localStorage.getItem('sessionId')}<div>{dataString1}</div><div>{dataString2}</div></div> ); 
@@ -170,23 +171,18 @@ function Simon() {
                 className="image-button"
                 style={{ top: pos.top, left: pos.left, width: '50px', height: '50px' }}
                 onClick={() => {
-                  handleFlash(index);
+                    handleFlash(index);
+
                   if (datas) {
                     const updatedData = {
                       ...datas,
                       expectedList: Array.isArray(datas.expectedList) ? [...datas.expectedList, index + 1] : [index + 1],  
                     };
+                     
                     setData(updatedData);
                     const dataString2 = updatedData.expectedList.join(', ');
                     setDataString2(dataString2);
-                    if (updatedData.expectedList.length == datas.level) {
-                      postData(updatedData);  
-                      const updatedData1 = {
-                        ...datas,
-                        expectedList: [],  
-                      };
-                      setData(updatedData1);
-                    }
+                    postData(updatedData);
                   }
                 }}
           >

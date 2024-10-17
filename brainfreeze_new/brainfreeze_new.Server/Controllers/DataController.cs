@@ -30,15 +30,17 @@ namespace brainfreeze_new.Server.Controllers
         public ActionResult<Data> Add([FromBody] Data sequence)
         {
             Console.WriteLine($"Sent back data:\nArray size: {sequence.expectedList.Count}");
-            if (sequence is null || sequence.createdList is null || sequence.expectedList is null || sequence.expectedList.Count != sequence.createdList.Count)
+            if (sequence is null || sequence.createdList is null || sequence.expectedList is null)
             {
                 return BadRequest("Invalid data");
             }
             if (Check(sequence))
             {
-                sequence.expectedList.Clear();
-                sequence.level++;
-                sequence.createdList.Add(Random.Shared.Next(1, 10));
+                if(sequence.expectedList.Count == sequence.createdList.Count) {
+                    sequence.expectedList.Clear();
+                    sequence.level++;
+                    sequence.createdList.Add(Random.Shared.Next(1, 10));
+                }
                 return Ok(sequence);
             }
             else
@@ -56,7 +58,7 @@ namespace brainfreeze_new.Server.Controllers
         // Checks to see if the sequence is ok:)
         private bool Check(Data sequence)
         {
-            for (int i = 0; i < sequence.level; i++)
+            for (int i = 0; i < sequence.expectedList.Count; i++)
             {
                 if (sequence.createdList[i] != sequence.expectedList[i]) return false;
             }

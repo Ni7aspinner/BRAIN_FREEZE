@@ -19,9 +19,15 @@ namespace brainfreeze_new.Server.Controllers
         public ActionResult<Data> Get(DifficultyLevel level = DifficultyLevel.VeryEasy)
         {
             Data sequence = new Data();
-            for (int i = 0; i < (int)level; i++)
+            if (level == DifficultyLevel.Custom)
             {
-                ModifyList(data: sequence);
+                CustomList(data: sequence);
+            } else
+            {
+                for (int i = 0; i < (int)level; i++)
+                {
+                    ModifyList(data: sequence);
+                }
             }
             return Ok(new ResponseData(sequence, "Game started!"));
         }
@@ -35,9 +41,9 @@ namespace brainfreeze_new.Server.Controllers
             {
                 return BadRequest("Invalid data");
             }
-            if (shortCheck(sequence))
+            if (ShortCheck(sequence))
             {
-                if(new Check(sequence).areEqual)
+                if(new Check(sequence).AreEqual)
                 {
                     sequence.expectedList.Clear();
                     ModifyList(data: sequence);
@@ -64,7 +70,33 @@ namespace brainfreeze_new.Server.Controllers
             data.createdList.Add(createdNum);
         }
 
-        private bool shortCheck(Data sequence)
+        //Creates and applies custom list from Challenge.txt file
+        static private void CustomList(Data data)
+        {
+            try
+            {
+                StreamReader reader = new("Challenge.txt");
+
+                data.createdList.Clear();
+                string? challengeData = reader.ReadLine();
+
+                if (challengeData != null)
+                {
+                    List<object> challengeDataList = challengeData
+                    .Split(new char[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries)
+                    .Select(int.Parse)
+                    .Cast<object>().ToList();
+
+                    data.createdList = challengeDataList;
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        private static bool ShortCheck(Data sequence)
         {
             // Ensure both lists are of equal length or that createdList is longer than expectedList
             if (sequence.createdList.Count < sequence.expectedList.Count)
@@ -106,9 +138,9 @@ namespace brainfreeze_new.Server.Controllers
 
         // Checks to see if the sequence is ok. Has to deserialize from json if we want
         // to later use object to include also different types of information
-        public struct Check
+        public readonly struct Check
         {
-           public bool areEqual { get; } = false;
+           public bool AreEqual { get; } = false;
             public Check(Data sequence)
             {
                 var createdListInts = sequence.createdList
@@ -119,7 +151,7 @@ namespace brainfreeze_new.Server.Controllers
                     .Select(item => item is JsonElement jsonElement ? jsonElement.GetInt32() : (int)item)
                     .ToList();
 
-                    areEqual = createdListInts.SequenceEqual(expectedListInts);
+                    AreEqual = createdListInts.SequenceEqual(expectedListInts);
 
                 //very random implementation of extension method. 
                 //in this case Words is extended with WordsExtended
@@ -135,7 +167,7 @@ namespace brainfreeze_new.Server.Controllers
                 {
                     Console.Write(item + " ");
                 }
-                Console.WriteLine($"\nLists are equal: {areEqual}");
+                Console.WriteLine($"\nLists are equal: {AreEqual}");
             }
         }
     }
@@ -147,6 +179,7 @@ namespace brainfreeze_new.Server.Controllers
         Normal,
         Hard,
         Nightmare,
-        Impossible
+        Impossible,
+        Custom
     }
 }

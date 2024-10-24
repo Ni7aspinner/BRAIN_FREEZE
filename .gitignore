@@ -2,7 +2,12 @@ brainfreeze_new/brainfreeze_new.Server/bin/
 brainfreeze_new/brainfreeze_new.Server/obj/
 brainfreeze_new/brainfreeze_new.client/obj/
 
-brainfreeze_new/.vs/
+brainfreeze_new.Server/obj/
+brainfreeze_new.client/obj/
+brainfreeze_new.Server/bin/
+brainfreeze_new.client/bin/
+
+.vs/
 *.suo
 *.ntvs*
 *.njsproj

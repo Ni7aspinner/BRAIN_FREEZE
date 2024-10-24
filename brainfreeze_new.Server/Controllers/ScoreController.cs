@@ -11,7 +11,7 @@ namespace brainfreeze_new.Server.Controllers
             return Ok(new { score });
         }
 
-        private int CalculateScore(int[] userInput, int[] pattern, DifficultyLevel difficulty)
+        private static int CalculateScore(int[] userInput, int[] pattern, DifficultyLevel difficulty)
         {
             int baseScore = 0;
 

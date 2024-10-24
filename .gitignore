@@ -1,6 +1,8 @@
 brainfreeze_new/brainfreeze_new.Server/bin/
 brainfreeze_new/brainfreeze_new.Server/obj/
 brainfreeze_new/brainfreeze_new.client/obj/
+brainfreeze_new.Server/obj/
+brainfreeze_new.client/obj/
 
 brainfreeze_new.Server/obj/
 brainfreeze_new.client/obj/
@@ -35,6 +37,7 @@ dist
 dist-ssr
 *.local
 
+.vs/
 .vscode/*
 !.vscode/extensions.json
 .idea

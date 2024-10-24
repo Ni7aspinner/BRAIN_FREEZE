@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="..\buildMultiTargeting\brainfreeze_new.Server.props" />
-</Project>

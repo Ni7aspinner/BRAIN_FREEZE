@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import './Simon.css';
 import Keypad from '../assets/keypad.png';
 import Follow from '../assets/follow.png';
-
 interface Data {
     createdList: number[];
     level: number;
@@ -17,6 +16,7 @@ function Simon() {
   const [dataString2, setDataString2] = useState<string>(''); 
   const [flashingButtons, setFlashingButtons] = useState(Array(9).fill(false));
   const [score, setScore] = useState<number>(0);
+  const [hasFlashed, setHasFlashed] = useState<boolean>(false);
 
   const contents = datas === undefined
       ? <p><em>Loading... Please refresh once the ASP.NET backend has started. See <a href="https://aka.ms/jspsintegrationreact">https://aka.ms/jspsintegrationreact</a> for more details.</em></p>
@@ -53,6 +53,15 @@ function Simon() {
       populateData(storedSessionId);
     }
   }, []);
+
+    useEffect(() => {
+        if (datas && !hasFlashed) {
+            setTimeout(() => {
+                handleArray();
+                setHasFlashed(true);
+            }, 1000);
+        }
+    }, [datas, hasFlashed]);
 
   const evaluateScore = async (userInput: number[]) => {
     if (!datas) return;
@@ -130,7 +139,6 @@ function Simon() {
         setTimeout(() => { handleFlash(datas.createdList[i]-1);}, i*400);
       }
       setTimeout(() => {
-        //fetch('https://localhost:7005/api/buttonpress');
       }, 12 * 400);
     } 
     else{
@@ -152,7 +160,6 @@ function Simon() {
         return newState;
       });
     }, 200);
-    //fetch('https://localhost:5276/api/buttonpress')
   };
 
 
@@ -179,7 +186,6 @@ function Simon() {
       setDataString1(dataString1); 
       const dataString2 = result.expectedList.join(', ');
       setDataString2(dataString2);
-
       }
       else {
         console.error('Error in API request: ', response.statusText);
@@ -211,18 +217,28 @@ function Simon() {
                 className="image-button"
                 style={{ top: pos.top, left: pos.left, width: '50px', height: '50px' }}
                 onClick={() => {
-                  handleFlash(index);
-                  if (datas) {
-                    const updatedData = {
-                      ...datas,
-                      expectedList: Array.isArray(datas.expectedList) ? [...datas.expectedList, index + 1] : [index + 1],  
-                    };
-                    setData(updatedData);
-                    const dataString2 = updatedData.expectedList.join(', ');
-                    setDataString2(dataString2);
-                    postData(updatedData);  
-                    evaluateScore(updatedData.createdList);
-                  }
+                    handleFlash(index);
+                    if (datas) {
+                        const updatedUserInput = [...datas.expectedList, index + 1];
+                        const updatedData = {
+                            ...datas,
+                            expectedList: Array.isArray(datas.expectedList) ? [...datas.expectedList, index + 1] : [index + 1],
+                        };
+                        setData(updatedData);
+                        const dataString2 = updatedData.expectedList.join(', ');
+                        setDataString2(dataString2);
+                        postData(updatedData);
+                        if (updatedUserInput.length === datas.createdList.length) {
+                            if (JSON.stringify(updatedUserInput) === JSON.stringify(datas.createdList)) {
+                                evaluateScore(updatedUserInput);
+                                setHasFlashed(false);
+                            }
+                        }
+                        else {
+                            setScore(0);
+                            //setHasFlashed(false);
+                        }
+                    }
                 }}
           >
           </button>
@@ -231,7 +247,6 @@ function Simon() {
      
           <div>
               {contents}
-              <button onClick={() => handleArray()}></button>
           </div>
       </div>
     </>

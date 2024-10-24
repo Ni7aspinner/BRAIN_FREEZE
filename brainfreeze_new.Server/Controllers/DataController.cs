@@ -21,12 +21,12 @@ namespace brainfreeze_new.Server.Controllers
             Data sequence = new Data();
             if (level == DifficultyLevel.Custom)
             {
-                CustomList(data: sequence);
+                CustomList(sequence);
             } else
             {
                 for (int i = 0; i < (int)level; i++)
                 {
-                    ModifyList(data: sequence);
+                    ModifyList(sequence, max: 10);
                 }
             }
             return Ok(new ResponseData(sequence, "Game started!"));
@@ -46,7 +46,7 @@ namespace brainfreeze_new.Server.Controllers
                 if(new Check(sequence).AreEqual)
                 {
                     sequence.ExpectedList.Clear();
-                    ModifyList(data: sequence);
+                    ModifyList(sequence, max:10);
                     return Ok(new ResponseData(sequence, "Congrats player!"));
                 }
                 return Ok(new ResponseData(sequence, "Proceed"));
@@ -56,16 +56,16 @@ namespace brainfreeze_new.Server.Controllers
                 Data newSequence = new();
                 for (int i = 0; i < (int)level; i++)
                 {
-                    ModifyList(data: newSequence);
+                    ModifyList(newSequence, max:10);
                 }
                 Console.WriteLine($"Returning new sequence");
                 return Ok(new ResponseData(newSequence, "Loser!"));
             }
         }
 
-        static private void ModifyList(Data data)
+        static private void ModifyList(Data data, int min=1, int max=10)
         {
-            int createdNum = Random.Shared.Next(1, 10);
+            int createdNum = Random.Shared.Next(min, max);
             object o = createdNum;
             data.CreatedList.Add(o);
         }
@@ -77,7 +77,7 @@ namespace brainfreeze_new.Server.Controllers
             {
                 StreamReader reader = new("Challenge.txt");
 
-                data.createdList.Clear();
+                data.CreatedList.Clear();
                 string? challengeData = reader.ReadLine();
 
                 if (challengeData != null)
@@ -87,7 +87,7 @@ namespace brainfreeze_new.Server.Controllers
                     .Select(int.Parse)
                     .Cast<object>().ToList();
 
-                    data.createdList = challengeDataList;
+                    data.CreatedList = challengeDataList;
                 }
             }
             catch (Exception)

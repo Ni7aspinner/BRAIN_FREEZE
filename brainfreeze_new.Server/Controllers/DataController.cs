@@ -18,10 +18,16 @@ namespace brainfreeze_new.Server.Controllers
         [HttpGet(Name = "GetData")]
         public ActionResult<Data> Get(DifficultyLevel level = DifficultyLevel.VeryEasy)
         {
-            Data sequence = new();
-            for (int i = 0; i < (int)level; i++)
+            Data sequence = new Data();
+            if (level == DifficultyLevel.Custom)
             {
-                ModifyList(data: sequence);
+                CustomList(data: sequence);
+            } else
+            {
+                for (int i = 0; i < (int)level; i++)
+                {
+                    ModifyList(data: sequence);
+                }
             }
             return Ok(new ResponseData(sequence, "Game started!"));
         }
@@ -64,6 +70,32 @@ namespace brainfreeze_new.Server.Controllers
             data.CreatedList.Add(o);
         }
 
+        //Creates and applies custom list from Challenge.txt file
+        static private void CustomList(Data data)
+        {
+            try
+            {
+                StreamReader reader = new("Challenge.txt");
+
+                data.createdList.Clear();
+                string? challengeData = reader.ReadLine();
+
+                if (challengeData != null)
+                {
+                    List<object> challengeDataList = challengeData
+                    .Split(new char[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries)
+                    .Select(int.Parse)
+                    .Cast<object>().ToList();
+
+                    data.createdList = challengeDataList;
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        
         private static bool ShortCheck(Data sequence)
         {
             // Ensure both lists are of equal length or that createdList is longer than expectedList
@@ -149,6 +181,7 @@ namespace brainfreeze_new.Server.Controllers
         Normal,
         Hard,
         Nightmare,
-        Impossible
+        Impossible,
+        Custom
     }
 }

@@ -1,19 +1,22 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-[ApiController]
-[Route("api/[controller]")]
-
-// Simple))). Creates a session id its an API endpoint https://localhost:7005/api/session/new
-public class SessionController : ControllerBase
+namespace brainfreeze_new.Server.Controllers
 {
-    private static Dictionary<string, string> sessions = new Dictionary<string, string>();
+    [ApiController]
+    [Route("api/[controller]")]
 
-    [HttpGet("new")]
-    public IActionResult GetNewSessionId()
+    // Simple))). Creates a session id its an API endpoint https://localhost:7005/api/session/new
+    public class SessionController : ControllerBase
     {
-        var sessionId = Guid.NewGuid().ToString();
-        sessions[sessionId] = sessionId;
+        private static readonly Dictionary<string, string> sessions = [];
 
-        return Ok(new { sessionId });
+        [HttpGet("new")]
+        public IActionResult GetNewSessionId()
+        {
+            var sessionId = Guid.NewGuid().ToString();
+            sessions[sessionId] = sessionId;
+
+            return Ok(new { sessionId });
+        }
     }
 }

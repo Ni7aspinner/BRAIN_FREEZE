@@ -18,7 +18,7 @@ namespace brainfreeze_new.Server.Controllers
         [HttpGet(Name = "GetData")]
         public ActionResult<Data> Get(DifficultyLevel level = DifficultyLevel.VeryEasy)
         {
-            Data sequence = new Data();
+            Data sequence = new();
             for (int i = 0; i < (int)level; i++)
             {
                 ModifyList(data: sequence);
@@ -30,16 +30,16 @@ namespace brainfreeze_new.Server.Controllers
         [HttpPost(Name = "AddData")]
         public ActionResult<Data> Add([FromBody] Data sequence, DifficultyLevel level = DifficultyLevel.VeryEasy)
         {
-            Console.WriteLine($"Sent back data:\nArray size: {sequence.expectedList.Count}");
-            if (sequence is null || sequence.createdList is null || sequence.expectedList is null)
+            Console.WriteLine($"Sent back data:\nArray size: {sequence.ExpectedList.Count}");
+            if (sequence is null || sequence.CreatedList is null || sequence.ExpectedList is null)
             {
                 return BadRequest("Invalid data");
             }
-            if (shortCheck(sequence))
+            if (ShortCheck(sequence))
             {
-                if(new Check(sequence).areEqual)
+                if(new Check(sequence).AreEqual)
                 {
-                    sequence.expectedList.Clear();
+                    sequence.ExpectedList.Clear();
                     ModifyList(data: sequence);
                     return Ok(new ResponseData(sequence, "Congrats player!"));
                 }
@@ -47,7 +47,7 @@ namespace brainfreeze_new.Server.Controllers
             }
             else
             {
-                Data newSequence = new Data();
+                Data newSequence = new();
                 for (int i = 0; i < (int)level; i++)
                 {
                     ModifyList(data: newSequence);
@@ -61,22 +61,22 @@ namespace brainfreeze_new.Server.Controllers
         {
             int createdNum = Random.Shared.Next(1, 10);
             object o = createdNum;
-            data.createdList.Add(createdNum);
+            data.CreatedList.Add(o);
         }
 
-        private bool shortCheck(Data sequence)
+        private static bool ShortCheck(Data sequence)
         {
             // Ensure both lists are of equal length or that createdList is longer than expectedList
-            if (sequence.createdList.Count < sequence.expectedList.Count)
+            if (sequence.CreatedList.Count < sequence.ExpectedList.Count)
             {
                 return false;
             }
 
-            for (int i = 0; i < sequence.expectedList.Count; i++)
+            for (int i = 0; i < sequence.ExpectedList.Count; i++)
             {
                 // Convert elements in both lists to integers using TryGetInt32
-                if (sequence.createdList[i] is JsonElement createdElement
-                    && sequence.expectedList[i] is JsonElement expectedElement)
+                if (sequence.CreatedList[i] is JsonElement createdElement
+                    && sequence.ExpectedList[i] is JsonElement expectedElement)
                 {
                     if (createdElement.ValueKind == JsonValueKind.Number
                         && expectedElement.ValueKind == JsonValueKind.Number)
@@ -106,36 +106,38 @@ namespace brainfreeze_new.Server.Controllers
 
         // Checks to see if the sequence is ok. Has to deserialize from json if we want
         // to later use object to include also different types of information
-        public struct Check
+        public readonly struct Check
         {
-           public bool areEqual { get; } = false;
+           public bool AreEqual { get; } = false;
             public Check(Data sequence)
             {
-                var createdListInts = sequence.createdList
+
+                IEnumerable<int> expectedListInts = sequence.ExpectedList
                     .Select(item => item is JsonElement jsonElement ? jsonElement.GetInt32() : (int)item)
                     .ToList();
 
-                var expectedListInts = sequence.expectedList
-                    .Select(item => item is JsonElement jsonElement ? jsonElement.GetInt32() : (int)item)
-                    .ToList();
+                IEnumerable<int> createdListInts =
+                   from created in sequence.CreatedList
+                   where created is JsonElement
+                   select ((JsonElement)created).GetInt32();
 
-                    areEqual = createdListInts.SequenceEqual(expectedListInts);
+                AreEqual = createdListInts.SequenceEqual(expectedListInts);
 
                 //very random implementation of extension method. 
                 //in this case Words is extended with WordsExtended
-                Words words = new Words();
+                Words words = new();
 
                 Console.Write(words.Created());
-                foreach (object item in sequence.createdList)
+                foreach (object item in sequence.CreatedList)
                 {
                     Console.Write(item + words.Space());
                 }
                 Console.Write(words.Expected());
-                foreach (object item in sequence.expectedList)
+                foreach (object item in sequence.ExpectedList)
                 {
                     Console.Write(item + " ");
                 }
-                Console.WriteLine($"\nLists are equal: {areEqual}");
+                Console.WriteLine($"\nLists are equal: {AreEqual}");
             }
         }
     }

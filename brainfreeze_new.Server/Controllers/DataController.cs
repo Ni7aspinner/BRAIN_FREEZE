@@ -125,14 +125,14 @@ namespace brainfreeze_new.Server.Controllers
 
                 //very random implementation of extension method. 
                 //in this case Words is extended with WordsExtended
-                Words words = new();
+                DateTime today = DateTime.Now;
 
-                Console.Write(words.Created());
+                Console.Write(today.Created());
                 foreach (object item in sequence.CreatedList)
                 {
-                    Console.Write(item + words.Space());
+                    Console.Write(item + today.Space());
                 }
-                Console.Write(words.Expected());
+                Console.Write(today.Expected());
                 foreach (object item in sequence.ExpectedList)
                 {
                     Console.Write(item + " ");

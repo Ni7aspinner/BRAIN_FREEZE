@@ -3,8 +3,9 @@ import Navbar from "./components/Navbar";
 function Header() {
     return(
         <header>
-            <h2>BrainFreeze</h2>
+            <div className="header">
             <Navbar/>
+            </div>
         </header>
     );
 }

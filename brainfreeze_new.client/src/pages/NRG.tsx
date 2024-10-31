@@ -51,8 +51,11 @@ function NRG() {
       }, 200);
     };
     return (
-      <><div className="block" >
+      <>
+      <h3>Memory Matrix</h3>
+      <div className="block" >
             <div className='image-container1'>
+                
             <img src={Grid} className="imageGrid"/>
             {buttonPositions.map((pos, index) => (
           <button

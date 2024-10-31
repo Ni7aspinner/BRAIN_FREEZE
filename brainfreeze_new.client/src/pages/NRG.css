@@ -1,0 +1,23 @@
+.block{
+    width: 100%;
+    height: 100%;
+    padding-top: 20px;
+    
+}
+.imageGrid{
+    width: 500px;
+    height: 500px;
+}
+.grid-block{
+    position: absolute;
+    transform: translate(0%, 0%);
+    padding: 5px 10px;
+    cursor: pointer;
+    background-color: rgba(84, 180, 84, 0.201);
+}
+.grid-block.activated{
+    background-color: rgb(80, 255, 80);
+}
+.image-container1 {
+    position: relative;
+  }

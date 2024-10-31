@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import './Simon.css';
-import Keypad from '../assets/keypad.png';
-import Follow from '../assets/follow.png';
+import Keypad from '../assets/Keypad.png';
+import Follow from '../assets/Follow.png';
 interface Data {
     createdList: number[];
     level: number;

@@ -1,0 +1,27 @@
+
+.block {
+    display: flex;
+    padding: 0;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;      
+}
+.image-container1 {
+    width: 500px;
+    height: 500px;
+    position: relative;
+}
+.imageGrid{
+    width: 500px;
+    height: 500px;
+   
+}
+.grid-block{
+    position: absolute;
+    padding: 5px 10px;
+    cursor: pointer;
+    background-color: rgba(84, 180, 84, 0);
+}
+.grid-block.activated{
+    background-color: rgb(80, 255, 80);
+}

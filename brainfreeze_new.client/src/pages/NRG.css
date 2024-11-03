@@ -20,8 +20,12 @@
     position: absolute;
     padding: 5px 10px;
     cursor: pointer;
+    font-size: 0px;
+    border:none;
     background-color: rgba(84, 180, 84, 0);
 }
 .grid-block.activated{
     background-color: rgb(80, 255, 80);
+    color: black;
+    font-size: 45px;
 }

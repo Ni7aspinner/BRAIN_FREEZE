@@ -17,6 +17,7 @@ brainfreeze_new.client/bin/
 *.dll
 *.exe
 *.json
+*.tsbuildinfo
 
 logs
 *.log

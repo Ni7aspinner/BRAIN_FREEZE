@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using brainfreeze_new.Server.Controllers;
+using Xunit;
 
 namespace brainfreeze_new.Tests.Controllers
 {

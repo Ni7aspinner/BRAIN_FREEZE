@@ -8,6 +8,7 @@ brainfreeze_new.client/bin/
 *.ntvs*
 *.njsproj
 *.sln
+*.csproj
 
 *.user
 *.userosscache

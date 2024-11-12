@@ -6,7 +6,20 @@ interface Data {
     createdList: number[];
     level: number;
     expectedList: number[]; 
-    difficulty: 'VeryEasy' | 'Easy' | 'Medium' | 'Hard' | 'Nightmare' | 'Impossible';
+}
+
+enum Difficulty {
+  VeryEasy = 'VeryEasy',
+  Easy = 'Easy',
+  Medium = 'Medium',
+  Hard = 'Hard',
+  Nightmare = 'Nightmare',
+  Impossible = 'Impossible',
+}
+
+enum GameMode {
+  Main = 'Main',
+  Practice = 'Practice'
 }
 
 
@@ -17,14 +30,16 @@ function Simon() {
   const [flashingButtons, setFlashingButtons] = useState(Array(9).fill(false));
   const [score, setScore] = useState<number>(0);
   const [hasFlashed, setHasFlashed] = useState<boolean>(false);
+  const [gameMode, setGameMode] = useState<GameMode>(GameMode.Main); 
+  const [currentDifficulty, setCurrentDifficulty] = useState<Difficulty>(Difficulty.Easy);
 
   const contents = datas === undefined
       ? <p><em>Loading... Please refresh once the ASP.NET backend has started. See <a href="https://aka.ms/jspsintegrationreact">https://aka.ms/jspsintegrationreact</a> for more details.</em></p>
       : (<div>
-        <div></div>
         Game id: {localStorage.getItem('sessionId')}
         <div>{dataString1}</div>
         <div>{dataString2}</div>
+        <h2>{gameMode}</h2>
         {score !== null && <h2>Your Score: {score}</h2>} {/* Display score */}
       </div> ); 
   const buttonPositions = [
@@ -54,14 +69,28 @@ function Simon() {
     }
   }, []);
 
-    useEffect(() => {
-        if (datas && !hasFlashed) {
-            setTimeout(() => {
-                handleArray();
-                setHasFlashed(true);
-            }, 1000);
-        }
-    }, [datas, hasFlashed]);
+  useEffect(() => {
+    if (datas && !hasFlashed) {
+      setTimeout(() => {
+        handleArray();
+        setHasFlashed(true);
+      }, 1000);
+    }
+  }, [datas, hasFlashed]);
+
+  useEffect(() => {
+    // Whenever the game mode or difficulty changes, trigger new data population
+    if (datas) {
+      console.log('Game mode or difficulty changed, populating new data...');
+      setHasFlashed(false); // Reset so that it flashes again
+      setData(undefined); // Clear current data
+      setTimeout(() => {
+        populateData(localStorage.getItem('sessionId')!);  // Populate data again based on current session
+        // After this data is populated, so the other effect is triggered and flashing starts again
+      }, 1000);
+    }
+  }, [gameMode, currentDifficulty]);  
+
 
   const evaluateScore = async (userInput: number[]) => {
     if (!datas) return;
@@ -75,7 +104,7 @@ function Simon() {
         body: JSON.stringify({
           userInput,
           pattern: datas.expectedList, 
-          difficulty: datas.difficulty,
+          difficulty: currentDifficulty,
         }),
       });
 
@@ -196,8 +225,47 @@ function Simon() {
     }
   }
 
+  const togglePracticeMode = () => {
+    setGameMode(GameMode.Practice);
+    setScore(0); // Reset score on mode switch
+    console.log('Switching to practice mode');
+  };
+  const toggleMainMode = () => {
+    setGameMode(GameMode.Main);
+    setScore(0);
+    console.log('Switching to main mode');
+  }
+
+  const handleDifficultyChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedDifficulty = event.target.value as Difficulty;
+    setCurrentDifficulty(selectedDifficulty);
+  };
+
   return (
-    <><div>
+    <>
+      <div className="controls" style={{ display: 'flex', alignItems: 'center' }}>
+        <button 
+          onClick={gameMode === GameMode.Practice ? toggleMainMode : togglePracticeMode}
+          style={{ width: '250px', height: '60px' }}
+        >
+          {gameMode === GameMode.Practice ? 'Switch to main mode' : 'Switch to practice mode'}
+        </button>
+        {gameMode === GameMode.Practice && (
+          <select 
+            value={currentDifficulty} 
+            onChange={handleDifficultyChange}
+            style = {{ marginLeft: '5px' }}
+          >
+            <option value="VeryEasy">Very Easy</option>
+            <option value="Easy">Easy</option>
+            <option value="Medium">Medium</option>
+            <option value="Hard">Hard</option>
+            <option value="Nightmare">Nightmare</option>
+            <option value="Impossible">Impossible</option>
+          </select>
+        )}
+      </div>
+    <div>
       <div className="image-container">
         <img src={Follow} alt="Follow Image" className="image" />
         {buttonPositions.map((pos, index) => (

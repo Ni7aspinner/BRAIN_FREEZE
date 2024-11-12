@@ -9,12 +9,12 @@ interface Data {
 }
 
 enum Difficulty {
-  VeryEasy = 'VeryEasy',
-  Easy = 'Easy',
-  Medium = 'Medium',
-  Hard = 'Hard',
-  Nightmare = 'Nightmare',
-  Impossible = 'Impossible',
+  VeryEasy = 4,
+  Easy = 5,
+  Medium = 6,
+  Hard = 7,
+  Nightmare = 8,
+  Impossible = 9,
 }
 
 enum GameMode {
@@ -40,6 +40,7 @@ function Simon() {
         <div>{dataString1}</div>
         <div>{dataString2}</div>
         <h2>{gameMode}</h2>
+        <p>Difficulty selected: {Difficulty[currentDifficulty]}</p>
         {score !== null && <h2>Your Score: {score}</h2>} {/* Display score */}
       </div> ); 
   const buttonPositions = [
@@ -56,7 +57,7 @@ function Simon() {
 
   // Currently populates twice because main.tsx has strict mode enabled, useful for debugging (idk)
   // so dont be scared of the browser console output
-  useEffect(() => {
+  const initializeSession = () => {
     console.log('Checking for session ID in local storage');
     const storedSessionId = localStorage.getItem('sessionId');
     if (!storedSessionId) {
@@ -67,6 +68,10 @@ function Simon() {
       console.log('Session ID found in local storage:', storedSessionId);
       populateData(storedSessionId);
     }
+  };
+
+  useEffect(() => {
+    initializeSession();
   }, []);
 
   useEffect(() => {
@@ -85,12 +90,11 @@ function Simon() {
       setHasFlashed(false); // Reset so that it flashes again
       setData(undefined); // Clear current data
       setTimeout(() => {
-        populateData(localStorage.getItem('sessionId')!);  // Populate data again based on current session
+        initializeSession(); // Populate data again based on current session
         // After this data is populated, so the other effect is triggered and flashing starts again
       }, 1000);
     }
   }, [gameMode, currentDifficulty]);  
-
 
   const evaluateScore = async (userInput: number[]) => {
     if (!datas) return;
@@ -227,7 +231,7 @@ function Simon() {
 
   const togglePracticeMode = () => {
     setGameMode(GameMode.Practice);
-    setScore(0); // Reset score on mode switch
+    setScore(0); 
     console.log('Switching to practice mode');
   };
   const toggleMainMode = () => {
@@ -237,7 +241,7 @@ function Simon() {
   }
 
   const handleDifficultyChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedDifficulty = event.target.value as Difficulty;
+    const selectedDifficulty = Number(event.target.value) as Difficulty;
     setCurrentDifficulty(selectedDifficulty);
   };
 
@@ -256,12 +260,12 @@ function Simon() {
             onChange={handleDifficultyChange}
             style = {{ marginLeft: '5px' }}
           >
-            <option value="VeryEasy">Very Easy</option>
-            <option value="Easy">Easy</option>
-            <option value="Medium">Medium</option>
-            <option value="Hard">Hard</option>
-            <option value="Nightmare">Nightmare</option>
-            <option value="Impossible">Impossible</option>
+            <option value="4">Very Easy</option>
+            <option value="5">Easy</option>
+            <option value="6">Medium</option>
+            <option value="7">Hard</option>
+            <option value="8">Nightmare</option>
+            <option value="9">Impossible</option>
           </select>
         )}
       </div>

@@ -16,7 +16,7 @@ namespace brainfreeze_new.Server.Controllers
             int baseScore = 0;
 
             // Increment score if the user input matches the pattern
-            for (int i = 0; i < pattern.Length - 2; i++)
+            for (int i = 0; i < pattern.Length; i++)
             {
                 if (i < userInput.Length && userInput[i] == pattern[i])
                 {
@@ -24,7 +24,7 @@ namespace brainfreeze_new.Server.Controllers
                 }
                 else
                 {
-                    break; // End the scoring as soon as the pattern doesn't match
+                    return 0;
                 }
             }
 

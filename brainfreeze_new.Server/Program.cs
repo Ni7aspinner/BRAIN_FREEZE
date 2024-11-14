@@ -1,4 +1,10 @@
+using brainfreeze_new.Server.Models;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
+
+// Accessing the connection string from appsettings.json
+var connectionString = builder.Configuration.GetConnectionString("DevConnection");
 
 // Add services to the container.
 builder.Services.AddCors(options =>
@@ -10,16 +16,19 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+// Registering the DbContext with the connection string
+builder.Services.AddDbContext<ScoreboardDBContext>(options =>
+    options.UseSqlServer(connectionString));
+
+// Add Swagger
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();   
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
 app.UseDefaultFiles();
 app.UseStaticFiles();
-
-
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

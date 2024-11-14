@@ -7,6 +7,7 @@ import Simon from './pages/Simon';
 import Home from './pages/Home';
 import CardFlip from './pages/CardFlip'
 import NRG from './pages/NRG';
+import Scoreboard from './pages/Scoreboard';
 
 function App() {
     return (
@@ -17,6 +18,7 @@ function App() {
             <Route path="/card flip" element={<CardFlip/>}></Route>
             <Route path="/Simon" element={<Simon/>}></Route>
             <Route path="/NRG" element={<NRG/>}></Route>
+            <Route path="/Scoreboard" element={<Scoreboard/>}></Route>
         </Routes>
         <Footer/>
         </div>

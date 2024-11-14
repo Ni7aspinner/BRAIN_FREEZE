@@ -4,30 +4,47 @@ import Keypad from '../assets/Keypad.png';
 import Follow from '../assets/Follow.png';
 
 interface Data {
-  createdList: number[];
-  level: number;
-  expectedList: number[];
-  difficulty: 'VeryEasy' | 'Easy' | 'Medium' | 'Hard' | 'Nightmare' | 'Impossible';
+    createdList: number[];
+    level: number;
+    expectedList: number[];
+}
+
+enum Difficulty {
+  VeryEasy = 4,
+  Easy = 5,
+  Medium = 6,
+  Hard = 7,
+  Nightmare = 8,
+  Impossible = 9,
+}
+
+enum GameMode {
+  Main = 'Main',
+  Practice = 'Practice'
 }
 
 function Simon() {
   const [datas, setData] = useState<Data>();
-  const [dataString1, setDataString1] = useState<string>(''); 
-  const [dataString2, setDataString2] = useState<string>(''); 
+  const [dataString1, setDataString1] = useState<string>('');
+  const [dataString2, setDataString2] = useState<string>('');
   const [flashingButtons, setFlashingButtons] = useState(Array(9).fill(false));
   const [score, setScore] = useState<number>(0);
   const [hasFlashed, setHasFlashed] = useState<boolean>(false);
+  const [gameMode, setGameMode] = useState<GameMode>(GameMode.Main);
+  const [currentDifficulty, setCurrentDifficulty] = useState<Difficulty>(Difficulty.Easy);
 
   const contents = datas === undefined
-    ? <p><em>Loading... Please refresh once the ASP.NET backend has started. See <a href="https://aka.ms/jspsintegrationreact">https://aka.ms/jspsintegrationreact</a> for more details.</em></p>
-    : (
-      <div>
-        <div>{dataString1}</div>
-        <div>{dataString2}</div>
-        {score !== null && <h2>Your Score: {score}</h2>}
-      </div>
-    ); 
-  
+      ? <p><em>Loading... </em></p>
+      : (
+          <div>
+            <div>{dataString1}</div>
+            <div>{dataString2}</div>
+            <h2>{gameMode}</h2>
+            <p>Difficulty selected: {Difficulty[currentDifficulty]}</p>
+            {score !== null && <h2>Your Score: {score}</h2>} {/* Display score */}
+          </div>
+      );
+
   const buttonPositions = [
     { top: '40%', left: '28.5%' },
     { top: '40%', left: '51%' },
@@ -53,6 +70,17 @@ function Simon() {
     }
   }, [datas, hasFlashed]);
 
+  useEffect(() => {
+    // Whenever the game mode or difficulty changes, trigger new data population
+    if (datas) {
+      console.log('Game mode or difficulty changed, populating new data...');
+      setHasFlashed(false); // Reset so that it flashes again
+      setData(undefined); // Clear current data
+      populateData(); // Populate data again based on current session
+        // After this data is populated, so the other effect is triggered and flashing starts again
+    }
+  }, [gameMode, currentDifficulty]);
+
   const evaluateScore = async (userInput: number[]) => {
     if (!datas) return;
 
@@ -64,8 +92,8 @@ function Simon() {
         },
         body: JSON.stringify({
           userInput,
-          pattern: datas.expectedList, 
-          difficulty: datas.difficulty,
+          pattern: datas.expectedList,
+          difficulty: currentDifficulty,
         }),
       });
 
@@ -74,7 +102,7 @@ function Simon() {
       }
 
       const result = await response.json();
-      setScore(result.score); 
+      setScore(result.score);
     } catch (error) {
       console.error('Failed to evaluate score:', error);
     }
@@ -148,8 +176,52 @@ function Simon() {
     }
   }
 
-  return (
-    <div className="center">
+  const togglePracticeMode = () => {
+    setGameMode(GameMode.Practice);
+    setScore(0);
+    console.log('Switching to practice mode');
+  };
+
+  const toggleMainMode = () => {
+    setGameMode(GameMode.Main);
+    setScore(0);
+    console.log('Switching to main mode');
+  }
+
+  const handleDifficultyChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedDifficulty = Number(event.target.value) as Difficulty;
+    setCurrentDifficulty(selectedDifficulty);
+  };
+
+ return (
+  <>
+    <div className="controls" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+      <button
+        onClick={gameMode === GameMode.Practice ? toggleMainMode : togglePracticeMode}
+        style={{ width: '250px', height: '60px' }}
+      >
+        {gameMode === GameMode.Practice ? 'Switch to main mode' : 'Switch to practice mode'}
+      </button>
+    </div>
+
+    <div className="controls" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+      {gameMode === GameMode.Practice && (
+        <select
+          value={currentDifficulty}
+          onChange={handleDifficultyChange}
+          style={{ marginBottom: '10px' }}
+        >
+          <option value="4">Very Easy</option>
+          <option value="5">Easy</option>
+          <option value="6">Medium</option>
+          <option value="7">Hard</option>
+          <option value="8">Nightmare</option>
+          <option value="9">Impossible</option>
+        </select>
+      )}
+    </div>
+
+    <div className='center'>
       <div>
         <div className="image-container">
           <img src={Follow} alt="Follow Image" className="image" />
@@ -158,10 +230,9 @@ function Simon() {
               key={index}
               className={`image-button ${flashingButtons[index] ? 'flashing' : ''}`}
               style={{ top: pos.top, left: pos.left, width: '50px', height: '50px' }}
-            ></button>
+            />
           ))}
         </div>
-
         <div className="image-container">
           <img src={Keypad} alt="Keypad Image" className="image" />
           {buttonPositions.map((pos, index) => (
@@ -191,14 +262,16 @@ function Simon() {
                   }
                 }
               }}
-            ></button>
+            />
           ))}
         </div>
 
         <div>{contents}</div>
       </div>
     </div>
-  );
+  </>
+);
+
 }
 
 export default Simon;

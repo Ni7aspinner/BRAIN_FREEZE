@@ -177,11 +177,11 @@ namespace brainfreeze_new.Server.Controllers
     public enum DifficultyLevel
     {
         VeryEasy = 4,
-        Easy,
-        Normal,
-        Hard,
-        Nightmare,
-        Impossible,
+        Easy = 5,
+        Normal = 6,
+        Hard = 7,
+        Nightmare = 8,
+        Impossible = 9,
         Custom
     }
 }

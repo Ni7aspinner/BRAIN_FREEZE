@@ -6,7 +6,20 @@ interface Data {
     createdList: number[];
     level: number;
     expectedList: number[]; 
-    difficulty: 'VeryEasy' | 'Easy' | 'Medium' | 'Hard' | 'Nightmare' | 'Impossible';
+}
+
+enum Difficulty {
+  VeryEasy = 4,
+  Easy = 5,
+  Medium = 6,
+  Hard = 7,
+  Nightmare = 8,
+  Impossible = 9,
+}
+
+enum GameMode {
+  Main = 'Main',
+  Practice = 'Practice'
 }
 
 
@@ -17,14 +30,17 @@ function Simon() {
   const [flashingButtons, setFlashingButtons] = useState(Array(9).fill(false));
   const [score, setScore] = useState<number>(0);
   const [hasFlashed, setHasFlashed] = useState<boolean>(false);
+  const [gameMode, setGameMode] = useState<GameMode>(GameMode.Main); 
+  const [currentDifficulty, setCurrentDifficulty] = useState<Difficulty>(Difficulty.Easy);
 
   const contents = datas === undefined
       ? <p><em>Loading... Please refresh once the ASP.NET backend has started. See <a href="https://aka.ms/jspsintegrationreact">https://aka.ms/jspsintegrationreact</a> for more details.</em></p>
       : (<div>
-        <div></div>
         Game id: {localStorage.getItem('sessionId')}
         <div>{dataString1}</div>
         <div>{dataString2}</div>
+        <h2>{gameMode}</h2>
+        <p>Difficulty selected: {Difficulty[currentDifficulty]}</p>
         {score !== null && <h2>Your Score: {score}</h2>} {/* Display score */}
       </div> ); 
   const buttonPositions = [
@@ -41,7 +57,7 @@ function Simon() {
 
   // Currently populates twice because main.tsx has strict mode enabled, useful for debugging (idk)
   // so dont be scared of the browser console output
-  useEffect(() => {
+  const initializeSession = () => {
     console.log('Checking for session ID in local storage');
     const storedSessionId = localStorage.getItem('sessionId');
     if (!storedSessionId) {
@@ -52,16 +68,33 @@ function Simon() {
       console.log('Session ID found in local storage:', storedSessionId);
       populateData(storedSessionId);
     }
+  };
+
+  useEffect(() => {
+    initializeSession();
   }, []);
 
-    useEffect(() => {
-        if (datas && !hasFlashed) {
-            setTimeout(() => {
-                handleArray();
-                setHasFlashed(true);
-            }, 1000);
-        }
-    }, [datas, hasFlashed]);
+  useEffect(() => {
+    if (datas && !hasFlashed) {
+      setTimeout(() => {
+        handleArray();
+        setHasFlashed(true);
+      }, 1000);
+    }
+  }, [datas, hasFlashed]);
+
+  useEffect(() => {
+    // Whenever the game mode or difficulty changes, trigger new data population
+    if (datas) {
+      console.log('Game mode or difficulty changed, populating new data...');
+      setHasFlashed(false); // Reset so that it flashes again
+      setData(undefined); // Clear current data
+      setTimeout(() => {
+        initializeSession(); // Populate data again based on current session
+        // After this data is populated, so the other effect is triggered and flashing starts again
+      }, 1000);
+    }
+  }, [gameMode, currentDifficulty]);  
 
   const evaluateScore = async (userInput: number[]) => {
     if (!datas) return;
@@ -75,7 +108,7 @@ function Simon() {
         body: JSON.stringify({
           userInput,
           pattern: datas.expectedList, 
-          difficulty: datas.difficulty,
+          difficulty: currentDifficulty,
         }),
       });
 
@@ -196,8 +229,47 @@ function Simon() {
     }
   }
 
+  const togglePracticeMode = () => {
+    setGameMode(GameMode.Practice);
+    setScore(0); 
+    console.log('Switching to practice mode');
+  };
+  const toggleMainMode = () => {
+    setGameMode(GameMode.Main);
+    setScore(0);
+    console.log('Switching to main mode');
+  }
+
+  const handleDifficultyChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedDifficulty = Number(event.target.value) as Difficulty;
+    setCurrentDifficulty(selectedDifficulty);
+  };
+
   return (
-    <><div>
+    <>
+      <div className="controls" style={{ display: 'flex', alignItems: 'center' }}>
+        <button 
+          onClick={gameMode === GameMode.Practice ? toggleMainMode : togglePracticeMode}
+          style={{ width: '250px', height: '60px' }}
+        >
+          {gameMode === GameMode.Practice ? 'Switch to main mode' : 'Switch to practice mode'}
+        </button>
+        {gameMode === GameMode.Practice && (
+          <select 
+            value={currentDifficulty} 
+            onChange={handleDifficultyChange}
+            style = {{ marginLeft: '5px' }}
+          >
+            <option value="4">Very Easy</option>
+            <option value="5">Easy</option>
+            <option value="6">Medium</option>
+            <option value="7">Hard</option>
+            <option value="8">Nightmare</option>
+            <option value="9">Impossible</option>
+          </select>
+        )}
+      </div>
+    <div>
       <div className="image-container">
         <img src={Follow} alt="Follow Image" className="image" />
         {buttonPositions.map((pos, index) => (

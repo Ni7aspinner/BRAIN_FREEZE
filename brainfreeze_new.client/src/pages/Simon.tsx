@@ -10,12 +10,14 @@ interface Data {
 }
 
 enum Difficulty {
+  MainStart = 1,
   VeryEasy = 4,
   Easy = 5,
   Medium = 6,
   Hard = 7,
   Nightmare = 8,
   Impossible = 9,
+  Custom = 0,
 }
 
 enum GameMode {
@@ -30,8 +32,8 @@ function Simon() {
   const [flashingButtons, setFlashingButtons] = useState(Array(9).fill(false));
   const [score, setScore] = useState<number>(0);
   const [hasFlashed, setHasFlashed] = useState<boolean>(false);
-  const [gameMode, setGameMode] = useState<GameMode>(GameMode.Main);
-  const [currentDifficulty, setCurrentDifficulty] = useState<Difficulty>(Difficulty.Easy);
+  const [gameMode, setGameMode] = useState<GameMode>(GameMode.Main); 
+  const [currentDifficulty, setCurrentDifficulty] = useState<Difficulty>(Difficulty.MainStart);
 
   const contents = datas === undefined
       ? <p><em>Loading... </em></p>
@@ -81,9 +83,11 @@ function Simon() {
     }
   }, [gameMode, currentDifficulty]);
 
-  const evaluateScore = async (userInput: number[]) => {
-    if (!datas) return;
+    const evaluateScore = async (userInput: number[], datas: Data) => {
 
+        if (!datas) return;
+        console.log("Expected Pattern:", datas.expectedList);
+        console.log("User Input:", userInput);
     try {
       const response = await fetch('https://localhost:5219/api/score/evaluate', {
         method: 'POST',
@@ -102,36 +106,43 @@ function Simon() {
       }
 
       const result = await response.json();
-      setScore(result.score);
+      setScore(result.score); 
     } catch (error) {
       console.error('Failed to evaluate score:', error);
     }
   };
 
   // Fetches data for the game
+
   const populateData = async () => {
     try {
-      const response = await fetch('https://localhost:7005/api/Inc');
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-      const results = await response.json();
-      const data: Data = results.data;
-      setData(data);
-      const dataString1 = data.createdList.join(', ');
-      setDataString1(dataString1);
+        console.log('Populating data');
+        const response = await fetch(`https://localhost:7005/api/Inc?level=${currentDifficulty}`, {
+            method: 'GET'
+        });
+        if (!response.ok) {       
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const results = await response.json();
+        const data: Data = results.data;
+        console.log(results.message);
+        setData(data);
+
+        const dataString1 = data.createdList.join(', ');
+        setDataString1(dataString1);
     } catch (error) {
       console.error('Failed to fetch data:', error);
     }
   };
 
   const handleArray = () => {
-    if (datas && datas.level >= 4) {
-      for (let i = 0; i < datas.level; i++) {
-        setTimeout(() => { handleFlash(datas.createdList[i] - 1); }, i * 400);
+    if (datas && datas.level >=1) {
+      for(let i=0; i<datas.level; i++){
+        setTimeout(() => { handleFlash(datas.createdList[i]-1);}, i*400);
       }
-    } else {
-      console.error("Data is either undefined or doesn't have enough elements");
+    } 
+    else{
+      console.error("Data is either undefined or doesn't have enough elements ");
     }
   };
 
@@ -153,12 +164,20 @@ function Simon() {
 
   async function postData(data: Data) {
     try {
+      
+        console.log('Posting data:', JSON.stringify(data));
+
+        const payload = {
+            ...data,
+            difficulty: currentDifficulty
+        };
+      
       const response = await fetch('https://localhost:5219/api/Inc', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
+          body: JSON.stringify(payload),
       });
 
       if (response.ok) {
@@ -178,12 +197,14 @@ function Simon() {
 
   const togglePracticeMode = () => {
     setGameMode(GameMode.Practice);
-    setScore(0);
+    setCurrentDifficulty(Difficulty.VeryEasy);
+    setScore(0); 
     console.log('Switching to practice mode');
   };
 
   const toggleMainMode = () => {
     setGameMode(GameMode.Main);
+    setCurrentDifficulty(Difficulty.MainStart);
     setScore(0);
     console.log('Switching to main mode');
   }
@@ -193,34 +214,35 @@ function Simon() {
     setCurrentDifficulty(selectedDifficulty);
   };
 
- return (
-  <>
-    <div className="controls" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-      <button
-        onClick={gameMode === GameMode.Practice ? toggleMainMode : togglePracticeMode}
-        style={{ width: '250px', height: '60px' }}
-      >
-        {gameMode === GameMode.Practice ? 'Switch to main mode' : 'Switch to practice mode'}
-      </button>
-    </div>
+    return (
+        <>
+            <div className="controls" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <button
+                    onClick={gameMode === GameMode.Practice ? toggleMainMode : togglePracticeMode}
+                    style={{ width: '250px', height: '60px' }}
+                >
+                    {gameMode === GameMode.Practice ? 'Switch to main mode' : 'Switch to practice mode'}
+                </button>
+            </div>
 
-    <div className="controls" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-      {gameMode === GameMode.Practice && (
-        <select
-          value={currentDifficulty}
-          onChange={handleDifficultyChange}
-          style={{ marginBottom: '10px' }}
-        >
-          <option value="4">Very Easy</option>
-          <option value="5">Easy</option>
-          <option value="6">Medium</option>
-          <option value="7">Hard</option>
-          <option value="8">Nightmare</option>
-          <option value="9">Impossible</option>
-        </select>
-      )}
-    </div>
+            <div className="controls" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                {gameMode === GameMode.Practice && (
+                    <select
+                        value={currentDifficulty}
+                        onChange={handleDifficultyChange}
+                        style={{ marginBottom: '10px' }}
+             >
 
+            <option value="4">Very Easy</option>
+            <option value="5">Easy</option>
+            <option value="6">Medium</option>
+            <option value="7">Hard</option>
+            <option value="8">Nightmare</option>
+            <option value="9">Impossible</option>
+            <option value="0">Custom</option>
+          </select>
+        )}
+      </div>
     <div className='center'>
       <div>
         <div className="image-container">
@@ -254,7 +276,7 @@ function Simon() {
                   postData(updatedData);
                   if (updatedUserInput.length === datas.createdList.length) {
                     if (JSON.stringify(updatedUserInput) === JSON.stringify(datas.createdList)) {
-                      evaluateScore(updatedUserInput);
+                      evaluateScore(updatedUserInput, updatedData);
                       setHasFlashed(false);
                     }
                   } else {

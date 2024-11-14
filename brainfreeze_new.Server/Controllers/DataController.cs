@@ -14,9 +14,10 @@ namespace brainfreeze_new.Server.Controllers
             _logger = logger;
         }
         public record ResponseData(Data Data, string Message);
+
         // Generates and returns Data type object with a list of random integers
         [HttpGet(Name = "GetData")]
-        public ActionResult<Data> Get(DifficultyLevel level = DifficultyLevel.VeryEasy)
+        public ActionResult<Data> Get([FromQuery] DifficultyLevel level)
         {
             Data sequence = new Data();
             if (level == DifficultyLevel.Custom)
@@ -29,13 +30,14 @@ namespace brainfreeze_new.Server.Controllers
                     ModifyList(sequence, max: 10);
                 }
             }
-            return Ok(new ResponseData(sequence, "Game started!"));
+            return Ok(new ResponseData(sequence, "Game Started!"));
         }
 
         // Validates and processes received data
         [HttpPost(Name = "AddData")]
-        public ActionResult<Data> Add([FromBody] Data sequence, DifficultyLevel level = DifficultyLevel.VeryEasy)
+        public ActionResult<Data> Add([FromBody] Data sequence)
         {
+            int level = sequence.Difficulty;
             Console.WriteLine($"Sent back data:\nArray size: {sequence.ExpectedList.Count}");
             if (sequence is null || sequence.CreatedList is null || sequence.ExpectedList is null)
             {
@@ -43,10 +45,10 @@ namespace brainfreeze_new.Server.Controllers
             }
             if (ShortCheck(sequence))
             {
-                if(new Check(sequence).AreEqual)
+                if (new Check(sequence).AreEqual)
                 {
                     sequence.ExpectedList.Clear();
-                    ModifyList(sequence, max:10);
+                    ModifyList(sequence);
                     return Ok(new ResponseData(sequence, "Congrats player!"));
                 }
                 return Ok(new ResponseData(sequence, "Proceed"));
@@ -54,9 +56,16 @@ namespace brainfreeze_new.Server.Controllers
             else
             {
                 Data newSequence = new();
-                for (int i = 0; i < (int)level; i++)
+                if(level == (int)DifficultyLevel.Custom)
                 {
-                    ModifyList(newSequence, max:10);
+                    CustomList(newSequence);
+                }
+                else
+                {
+                    for (int i = 0; i < (int)level; i++)
+                    {
+                        ModifyList(newSequence);
+                    }
                 }
                 Console.WriteLine($"Returning new sequence");
                 return Ok(new ResponseData(newSequence, "Loser!"));
@@ -75,20 +84,22 @@ namespace brainfreeze_new.Server.Controllers
         {
             try
             {
-                StreamReader reader = new("Challenge.txt");
-
+                using StreamReader reader = new("Challenge.txt");
                 data.CreatedList.Clear();
                 string? challengeData = reader.ReadLine();
+                char[] separator = [' ', ','];
 
                 if (challengeData != null)
                 {
                     List<object> challengeDataList = challengeData
-                    .Split(new char[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries)
+                    .Split(separator, StringSplitOptions.RemoveEmptyEntries)
                     .Select(int.Parse)
                     .Cast<object>().ToList();
 
                     data.CreatedList = challengeDataList;
                 }
+
+
             }
             catch (Exception)
             {
@@ -102,6 +113,12 @@ namespace brainfreeze_new.Server.Controllers
             if (sequence.CreatedList.Count < sequence.ExpectedList.Count)
             {
                 return false;
+            }
+
+            // Handles starting list of 1
+            if (sequence.CreatedList.Count == 1 && sequence.ExpectedList.Count == 1 && new Check(sequence).AreEqual)
+            {
+                return true;
             }
 
             for (int i = 0; i < sequence.ExpectedList.Count; i++)
@@ -176,12 +193,13 @@ namespace brainfreeze_new.Server.Controllers
 
     public enum DifficultyLevel
     {
+        MainStart = 1,
         VeryEasy = 4,
         Easy = 5,
         Normal = 6,
         Hard = 7,
         Nightmare = 8,
         Impossible = 9,
-        Custom
+        Custom = 0
     }
 }

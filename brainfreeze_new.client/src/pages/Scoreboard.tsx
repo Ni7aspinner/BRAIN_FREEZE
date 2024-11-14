@@ -14,7 +14,6 @@ export default function Scoreboard() {
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    // Fetch the scoreboard data from the backend
     fetch('https://localhost:7005/api/Scoreboards')
       .then((response) => response.json())
       .then((data) => {
@@ -32,35 +31,37 @@ export default function Scoreboard() {
   }
 
   return (
-    <div>
-      <table>
-        <thead>
-          <tr>
-            <th>Place</th>
-            <th>Player</th>
-            <th>Simon score</th>
-            <th>Cardflip score</th>
-            <th>NRG score</th>
-          </tr>
-        </thead>
-        <tbody>
-          {scores.length > 0 ? (
-            scores.map((score) => (
-              <tr key={score.id}>
-                <td>{score.place}</td>
-                <td>{score.username}</td>
-                <td>{score.simonScore}</td>
-                <td>{score.cardflipScore}</td>
-                <td>{score.nrgScore}</td>
-              </tr>
-            ))
-          ) : (
+    <div className='center'>
+      <div>
+        <table>
+          <thead>
             <tr>
-              <td colSpan={3}>No scores available</td>
+              <th>Place</th>
+              <th>Player</th>
+              <th>Simon score</th>
+              <th>Cardflip score</th>
+              <th>NRG score</th>
             </tr>
-          )}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {scores.length > 0 ? (
+              scores.map((score) => (
+                <tr key={score.id}>
+                  <td>{score.place}</td>
+                  <td>{score.username}</td>
+                  <td>{score.simonScore}</td>
+                  <td>{score.cardflipScore}</td>
+                  <td>{score.nrgScore}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={3}>No scores available</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

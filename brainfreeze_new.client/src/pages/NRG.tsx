@@ -121,45 +121,44 @@ function NRG() {
     });
   };
     return (
-      <>
-      <h3>Memory Matrix</h3>
-      <div className="block" >
-            <div className='image-container1'>
-                
-            <img src={Grid} className="imageGrid"/>
-            {buttonPositions.map((pos, index) => (
-          <button
-                key={index}
-                className={`grid-block ${flashingButtons[index] ? 'activated' : ''}`}
-                style={{ top: pos.top, left: pos.left, width: '100px', height: '100px' }}
-                onClick={() => {
-                    flashButton(index);
-                    if (datas) {
-                      const updatedData = {
-                          ...datas,
-                          expectedList: Array.isArray(datas.expectedList) ? [...datas.expectedList, index] : [index],
-                      };
-                      setData(updatedData);
-                      const dataString2 = updatedData.expectedList.join(', ');
-                      setDataString2(dataString2);
-                      if(updatedData.createdList.length==updatedData.expectedList.length){
-                        setFlashingButtons(Array(25).fill(false));
-                        postData(updatedData);
-            
+      <div className='center'>
+        <><div className="block" >
+              <div className='image-container1'>
+              <img src={Grid} className="imageGrid"/>
+              {buttonPositions.map((pos, index) => (
+            <button
+                  key={index}
+                  className={`grid-block ${flashingButtons[index] ? 'activated' : ''}`}
+                  style={{ top: pos.top, left: pos.left, width: '100px', height: '100px' }}
+                  onClick={() => {
+                      flashButton(index);
+                      if (datas) {
+                        const updatedData = {
+                            ...datas,
+                            expectedList: Array.isArray(datas.expectedList) ? [...datas.expectedList, index] : [index],
+                        };
+                        setData(updatedData);
+                        const dataString2 = updatedData.expectedList.join(', ');
+                        setDataString2(dataString2);
+                        if(updatedData.createdList.length==updatedData.expectedList.length){
+                          setFlashingButtons(Array(25).fill(false));
+                          postData(updatedData);
+              
+                        }
                       }
-                    }
-                 }}
-          >
-          {datas && datas.createdList.includes(index)? datas.createdList.indexOf(index) + 1 : ''}
-          </button>
-        ))}
-        <div>{dataString1}</div>
-        <div>{dataString2}</div>
-        <button onClick={handleArray}></button>
-        <div >(index starts from zero)</div>
-        </div>
-        </div>
-      </>
+                  }}
+            >
+            {datas && datas.createdList.includes(index)? datas.createdList.indexOf(index) + 1 : ''}
+            </button>
+          ))}
+          <div>{dataString1}</div>
+          <div>{dataString2}</div>
+          <button onClick={handleArray}></button>
+          <div >(index starts from zero)</div>
+          </div>
+          </div>
+        </>
+      </div>
     );
   }
 export default NRG;

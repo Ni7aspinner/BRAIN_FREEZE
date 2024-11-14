@@ -113,29 +113,8 @@ function Simon() {
   };
 
   // Fetches data for the game
+
   const populateData = async () => {
-    try {
-        console.log('Requesting new session ID from session API');
-        const response = await fetch(`https://localhost:7005/api/session/new`);
-        
-        if (!response.ok) {
-            throw new Error(`Error fetching session ID: ${response.statusText}`);
-        }
-
-        const data = await response.json();
-        if (data && data.sessionId) {
-            localStorage.setItem('sessionId', data.sessionId);
-            console.log('New session ID stored:', data.sessionId);
-            populateData(data.sessionId);
-        } else {
-            console.error('Session ID not found in response:', data);
-        }
-    } catch (error) {
-        console.error('Error fetching new session ID:', error);
-    }
-  };
-
-  const populateData = async (sessionId: string) => {
     try {
         console.log('Populating data');
         const response = await fetch(`https://localhost:7005/api/Inc?level=${currentDifficulty}`, {
@@ -235,33 +214,25 @@ function Simon() {
     setCurrentDifficulty(selectedDifficulty);
   };
 
- return (
-  <>
-    <div className="controls" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-      <button
-        onClick={gameMode === GameMode.Practice ? toggleMainMode : togglePracticeMode}
-        style={{ width: '250px', height: '60px' }}
-      >
-        {gameMode === GameMode.Practice ? 'Switch to main mode' : 'Switch to practice mode'}
-      </button>
-    </div>
+    return (
+        <>
+            <div className="controls" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <button
+                    onClick={gameMode === GameMode.Practice ? toggleMainMode : togglePracticeMode}
+                    style={{ width: '250px', height: '60px' }}
+                >
+                    {gameMode === GameMode.Practice ? 'Switch to main mode' : 'Switch to practice mode'}
+                </button>
+            </div>
 
-    <div className="controls" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-      {gameMode === GameMode.Practice && (
-        <select
-          value={currentDifficulty}
-          onChange={handleDifficultyChange}
-          style={{ marginBottom: '10px' }}
-        >
-          
-          {gameMode === GameMode.Practice ? 'Switch to main mode' : 'Switch to practice mode'}
-        </button>
-        {gameMode === GameMode.Practice && (
-          <select 
-            value={currentDifficulty} 
-            onChange={handleDifficultyChange}
-            style = {{ marginLeft: '5px' }}
-          >
+            <div className="controls" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                {gameMode === GameMode.Practice && (
+                    <select
+                        value={currentDifficulty}
+                        onChange={handleDifficultyChange}
+                        style={{ marginBottom: '10px' }}
+             >
+
             <option value="4">Very Easy</option>
             <option value="5">Easy</option>
             <option value="6">Medium</option>
@@ -305,7 +276,7 @@ function Simon() {
                   postData(updatedData);
                   if (updatedUserInput.length === datas.createdList.length) {
                     if (JSON.stringify(updatedUserInput) === JSON.stringify(datas.createdList)) {
-                      evaluateScore(updatedUserInput);
+                      evaluateScore(updatedUserInput, updatedData);
                       setHasFlashed(false);
                     }
                   } else {

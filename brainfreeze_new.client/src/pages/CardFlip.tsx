@@ -30,17 +30,20 @@ const images = [
       setVisibleImages(newVisibleImages);
     };
 
-    return(<div className="grid-container">
-    {images.map((imageUrl, index) => (
-      <div key={index} className="grid-item" onClick={() => handleClick(index)}>
-        {visibleImages[index] ? (
-          <img src={imageUrl} alt={`Image ${index + 1}`} className="grid-image" />
-        ) : (
-          <div className="placeholder"></div>
-        )}
+    return(
+    <div className='center'>
+      <div className="grid-container">
+      {images.map((imageUrl, index) => (
+        <div key={index} className="grid-item" onClick={() => handleClick(index)}>
+          {visibleImages[index] ? (
+            <img src={imageUrl} alt={`Image ${index + 1}`} className="grid-image" />
+          ) : (
+            <div className="placeholder"></div>
+          )}
+        </div>
+      ))}
       </div>
-    ))}
-  </div>
+    </div>
     );
 };
 export default CardFlip;

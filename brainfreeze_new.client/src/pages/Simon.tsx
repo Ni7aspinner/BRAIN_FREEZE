@@ -5,16 +5,18 @@ import Follow from '../assets/Follow.png';
 interface Data {
     createdList: number[];
     level: number;
-    expectedList: number[]; 
+    expectedList: number[];
 }
 
 enum Difficulty {
+  MainStart = 1,
   VeryEasy = 4,
   Easy = 5,
   Medium = 6,
   Hard = 7,
   Nightmare = 8,
   Impossible = 9,
+  Custom = 0,
 }
 
 enum GameMode {
@@ -31,7 +33,7 @@ function Simon() {
   const [score, setScore] = useState<number>(0);
   const [hasFlashed, setHasFlashed] = useState<boolean>(false);
   const [gameMode, setGameMode] = useState<GameMode>(GameMode.Main); 
-  const [currentDifficulty, setCurrentDifficulty] = useState<Difficulty>(Difficulty.Easy);
+  const [currentDifficulty, setCurrentDifficulty] = useState<Difficulty>(Difficulty.MainStart);
 
   const contents = datas === undefined
       ? <p><em>Loading... Please refresh once the ASP.NET backend has started. See <a href="https://aka.ms/jspsintegrationreact">https://aka.ms/jspsintegrationreact</a> for more details.</em></p>
@@ -96,9 +98,11 @@ function Simon() {
     }
   }, [gameMode, currentDifficulty]);  
 
-  const evaluateScore = async (userInput: number[]) => {
-    if (!datas) return;
+    const evaluateScore = async (userInput: number[], datas: Data) => {
 
+        if (!datas) return;
+        console.log("Expected Pattern:", datas.expectedList);
+        console.log("User Input:", userInput);
     try {
       const response = await fetch('https://localhost:5219/api/score/evaluate', {
         method: 'POST',
@@ -118,6 +122,7 @@ function Simon() {
 
       const result = await response.json();
       setScore(result.score); 
+
     } catch (error) {
       console.error('Failed to evaluate score:', error);
     }
@@ -150,7 +155,10 @@ function Simon() {
   const populateData = async (sessionId: string) => {
     try {
         console.log('Populating data');
-        const response = await fetch(`https://localhost:7005/api/Inc?sessionId=${sessionId}`);  // Bijau liest sita, jis kolkas veikia,
+        console.log('Current difficulty:', currentDifficulty);
+        const response = await fetch(`https://localhost:7005/api/Inc?sessionId=${sessionId}&level=${currentDifficulty}`, {
+            method: 'GET'
+        });  // Bijau liest sita, jis kolkas veikia,
         if (!response.ok) {                                                                     // gal veliau prireiks darant logika
             throw new Error(`HTTP error! Status: ${response.status}`);
         }
@@ -158,8 +166,11 @@ function Simon() {
         const data: Data = results.data;
         console.log(results.message);
         setData(data);
+
         const dataString1 = data.createdList.join(', ');
         setDataString1(dataString1);
+        const dataString2 = data.expectedList.join(', ');
+        setDataString2(dataString2);
     } catch (error) {
         console.error('Failed to fetch data:', error);
     }
@@ -167,7 +178,7 @@ function Simon() {
 
   // Handles the flashing based on the array
   const handleArray = () => {
-    if (datas && datas.level >=4) {
+    if (datas && datas.level >=1) {
       for(let i=0; i<datas.level; i++){
         setTimeout(() => { handleFlash(datas.createdList[i]-1);}, i*400);
       }
@@ -175,7 +186,7 @@ function Simon() {
       }, 12 * 400);
     } 
     else{
-      console.error("Data is either undefined or doesn't have enough elements");
+      console.error("Data is either undefined or doesn't have enough elements ");
     }
   };
 
@@ -200,13 +211,19 @@ function Simon() {
   async function postData(data : Data) 
   {
     try {
-      console.log('Posting data:', JSON.stringify(data));
+        console.log('Posting data:', JSON.stringify(data));
+
+        const payload = {
+            ...data,
+            difficulty: currentDifficulty
+        };
+
       const response = await fetch('https://localhost:5219/api/Inc', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(data),
+          body: JSON.stringify(payload),
       });
 
       if (response.ok) {
@@ -231,11 +248,13 @@ function Simon() {
 
   const togglePracticeMode = () => {
     setGameMode(GameMode.Practice);
+    setCurrentDifficulty(Difficulty.VeryEasy);
     setScore(0); 
     console.log('Switching to practice mode');
   };
   const toggleMainMode = () => {
     setGameMode(GameMode.Main);
+    setCurrentDifficulty(Difficulty.MainStart);
     setScore(0);
     console.log('Switching to main mode');
   }
@@ -266,6 +285,7 @@ function Simon() {
             <option value="7">Hard</option>
             <option value="8">Nightmare</option>
             <option value="9">Impossible</option>
+            <option value="0">Custom</option>
           </select>
         )}
       </div>
@@ -300,15 +320,12 @@ function Simon() {
                         const dataString2 = updatedData.expectedList.join(', ');
                         setDataString2(dataString2);
                         postData(updatedData);
+                        
                         if (updatedUserInput.length === datas.createdList.length) {
                             if (JSON.stringify(updatedUserInput) === JSON.stringify(datas.createdList)) {
-                                evaluateScore(updatedUserInput);
+                                evaluateScore(updatedUserInput, updatedData);
                                 setHasFlashed(false);
                             }
-                        }
-                        else {
-                            setScore(0);
-                            //setHasFlashed(false);
                         }
                     }
                 }}

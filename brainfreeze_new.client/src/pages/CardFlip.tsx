@@ -19,6 +19,7 @@ const images = [
   gr, cr, cr
 ];
 
+
 const CardFlip: React.FC = () => {
   const [flippedCards, setFlippedCards] = useState<boolean[]>(
     new Array(images.length).fill(false)

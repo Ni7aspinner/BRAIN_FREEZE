@@ -24,7 +24,7 @@ namespace brainfreeze_new.Server.Controllers
                 }
                 else
                 {
-                    break; // End the scoring as soon as the pattern doesn't match
+                    return 0;
                 }
             }
 

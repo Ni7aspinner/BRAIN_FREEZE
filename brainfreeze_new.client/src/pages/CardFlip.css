@@ -57,11 +57,18 @@
   border-radius: 15px;
 }
 
-.grid-image {
-  width: 100px;
-  height: 150px;
-  object-fit: cover;
-  border-radius: 15px;
+  .grid-image {
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+  }
+
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  text-align: center;
 }
 
 .placeholder {
@@ -69,12 +76,4 @@
   height: 100px;
   background-color: #717780;
   border-radius: 15px;
-}
-
-  .center {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    text-align: center;
 }

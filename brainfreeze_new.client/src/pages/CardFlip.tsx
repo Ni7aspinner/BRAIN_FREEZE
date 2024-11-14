@@ -19,6 +19,7 @@ const images = [
   gr, cr, cr
 ];
 
+
 const CardFlip: React.FC = () => {
   const [flippedCards, setFlippedCards] = useState<boolean[]>(
     new Array(images.length).fill(false)
@@ -31,23 +32,25 @@ const CardFlip: React.FC = () => {
   };
 
   return (
-    <div className="grid-container">
-      {images.map((imageUrl, index) => (
-        <div
-          key={index}
-          className={`card ${flippedCards[index] ? 'flipped' : ''}`}
-          onClick={() => handleClick(index)}
-        >
-          <div className="card-inner">
-            <div className="card-front">
-              <div className="placeholder"></div>
-            </div>
-            <div className="card-back">
-              <img src={imageUrl} alt={`Image ${index + 1}`} className="grid-image" />
+    <div className='center'>
+      <div className="grid-container">
+        {images.map((imageUrl, index) => (
+          <div
+            key={index}
+            className={`card ${flippedCards[index] ? 'flipped' : ''}`}
+            onClick={() => handleClick(index)}
+          >
+            <div className="card-inner">
+              <div className="card-front">
+                <div className="placeholder"></div>
+              </div>
+              <div className="card-back">
+                <img src={imageUrl} alt={`Image ${index + 1}`} className="grid-image" />
+              </div>
             </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 };

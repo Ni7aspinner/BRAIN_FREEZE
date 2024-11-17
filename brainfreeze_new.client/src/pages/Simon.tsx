@@ -60,6 +60,7 @@ function Simon() {
   ];
 
   useEffect(() => {
+    fetchSimonScore();
     populateData();
   }, []);
 
@@ -82,6 +83,66 @@ function Simon() {
         // After this data is populated, so the other effect is triggered and flashing starts again
     }
   }, [gameMode, currentDifficulty]);
+
+  const fetchSimonScore = async () => {
+    try {
+        const response = await fetch(`https://localhost:7005/api/Scoreboards`);
+        if (!response.ok) {
+            throw new Error(`Error fetching scores: ${response.statusText}`);
+        }
+        const userId = Number(localStorage.getItem("ID"));
+        const data = await response.json();
+        const user = data.find((u: { id: number }) => u.id === userId);
+        if (user) {
+            localStorage.setItem("Simon", user.simonScore)
+            console.log(user.simonScore)
+        } else {
+            console.warn(`User with ID ${userId} not found.`);
+        }
+    } catch (error) {
+        console.error("Error fetching user scores:", error);
+    }
+};
+const putScore = async (newSimonScore: number) => {
+  try {
+      const userId = Number(localStorage.getItem("ID"));
+      if (isNaN(userId)) {
+          throw new Error("Invalid user ID in localStorage.");
+      }
+
+      const fetchResponse = await fetch(`https://localhost:7005/api/Scoreboards`);
+      if (!fetchResponse.ok) {
+          throw new Error(`Error fetching scores: ${fetchResponse.statusText}`);
+      }
+
+      const data = await fetchResponse.json();
+      const user = data.find((u: { id: number }) => u.id === userId);
+
+      if (user) {
+          const updatedUser = { ...user, simonScore: newSimonScore };
+
+          const putResponse = await fetch(`https://localhost:7005/api/Scoreboards/${userId}`, {
+              method: "PUT",
+              headers: {
+                  "Content-Type": "application/json",
+              },
+              body: JSON.stringify(updatedUser),
+          });
+
+          if (!putResponse.ok) {
+              throw new Error(`Error updating user: ${putResponse.statusText}`);
+          }
+
+          console.log(`User with ID ${userId} updated successfully.`);
+          localStorage.setItem("Simon", updatedUser.simonScore.toString());
+      } else {
+          console.warn(`User with ID ${userId} not found.`);
+      }
+  } catch (error) {
+      console.error("Error updating user score:", error);
+  }
+};
+
 
     const evaluateScore = async (userInput: number[], datas: Data) => {
 
@@ -107,11 +168,16 @@ function Simon() {
 
       const result = await response.json();
       setScore(result.score); 
+      const previousHighScore = Number(localStorage.getItem('Simon')) || 0;
+      if (result.score > previousHighScore) {
+        localStorage.setItem('Simon', result.score.toString());
+        putScore(result.score);
+      }
     } catch (error) {
       console.error('Failed to evaluate score:', error);
     }
   };
-
+  
   // Fetches data for the game
 
   const populateData = async () => {

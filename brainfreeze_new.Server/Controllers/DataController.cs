@@ -5,11 +5,11 @@ namespace brainfreeze_new.Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class IncController : ControllerBase
+    public class DataController : ControllerBase
     {
-        private readonly ILogger<IncController> _logger;
+        private readonly ILogger<DataController> _logger;
 
-        public IncController(ILogger<IncController> logger)             
+        public DataController(ILogger<DataController> logger)             
         {
             _logger = logger;
         }

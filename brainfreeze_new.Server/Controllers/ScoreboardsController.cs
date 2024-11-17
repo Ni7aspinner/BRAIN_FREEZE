@@ -94,7 +94,7 @@ namespace brainfreeze_new.Server.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
-        }
+        }   
 
         private bool ScoreboardExists(int id)
         {

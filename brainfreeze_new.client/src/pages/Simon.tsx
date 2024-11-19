@@ -34,6 +34,7 @@ function Simon() {
   const [hasFlashed, setHasFlashed] = useState<boolean>(false);
   const [gameMode, setGameMode] = useState<GameMode>(GameMode.Main); 
   const [currentDifficulty, setCurrentDifficulty] = useState<Difficulty>(Difficulty.MainStart);
+  const [id, setID] = useState<string | null>(localStorage.getItem("ID"));
 
   const contents = datas === undefined
       ? <p><em>Loading... </em></p>
@@ -86,42 +87,38 @@ function Simon() {
 
   const fetchSimonScore = async () => {
     try {
-        const response = await fetch(`https://localhost:7005/api/Scoreboards`);
+        const response = await fetch(`https://localhost:7005/api/Scoreboards/get-by-id/${id}`);
         if (!response.ok) {
             throw new Error(`Error fetching scores: ${response.statusText}`);
         }
-        const userId = Number(localStorage.getItem("ID"));
-        const data = await response.json();
-        const user = data.find((u: { id: number }) => u.id === userId);
+
+        const user = await response.json();
+
         if (user) {
             localStorage.setItem("Simon", user.simonScore)
             console.log(user.simonScore)
         } else {
-            console.warn(`User with ID ${userId} not found.`);
+            console.warn(`User with ID ${user.id} not found.`);
         }
     } catch (error) {
         console.error("Error fetching user scores:", error);
     }
 };
+
 const putScore = async (newSimonScore: number) => {
   try {
-      const userId = Number(localStorage.getItem("ID"));
-      if (isNaN(userId)) {
-          throw new Error("Invalid user ID in localStorage.");
-      }
-
-      const fetchResponse = await fetch(`https://localhost:7005/api/Scoreboards`);
+      console.log(id);
+      const fetchResponse = await fetch(`https://localhost:7005/api/Scoreboards/get-by-id/${id}`);
       if (!fetchResponse.ok) {
-          throw new Error(`Error fetching scores: ${fetchResponse.statusText}`);
+          throw new Error(`Error fetching user: ${fetchResponse.statusText}`);
       }
 
-      const data = await fetchResponse.json();
-      const user = data.find((u: { id: number }) => u.id === userId);
+      const user = await fetchResponse.json();
 
       if (user) {
           const updatedUser = { ...user, simonScore: newSimonScore };
 
-          const putResponse = await fetch(`https://localhost:7005/api/Scoreboards/${userId}`, {
+          const putResponse = await fetch(`https://localhost:7005/api/Scoreboards/${id}`, {
               method: "PUT",
               headers: {
                   "Content-Type": "application/json",
@@ -133,15 +130,16 @@ const putScore = async (newSimonScore: number) => {
               throw new Error(`Error updating user: ${putResponse.statusText}`);
           }
 
-          console.log(`User with ID ${userId} updated successfully.`);
+          console.log(`User with ID ${id} updated successfully.`);
           localStorage.setItem("Simon", updatedUser.simonScore.toString());
       } else {
-          console.warn(`User with ID ${userId} not found.`);
+          console.warn(`User with ID ${id} not found.`);
       }
   } catch (error) {
       console.error("Error updating user score:", error);
   }
 };
+
 
 
     const evaluateScore = async (userInput: number[], datas: Data) => {
@@ -183,7 +181,7 @@ const putScore = async (newSimonScore: number) => {
   const populateData = async () => {
     try {
         console.log('Populating data');
-        const response = await fetch(`https://localhost:7005/api/Inc?level=${currentDifficulty}`, {
+        const response = await fetch(`https://localhost:7005/api/Data?level=${currentDifficulty}`, {
             method: 'GET'
         });
         if (!response.ok) {       
@@ -238,7 +236,7 @@ const putScore = async (newSimonScore: number) => {
             difficulty: currentDifficulty
         };
       
-      const response = await fetch('https://localhost:5219/api/Inc', {
+      const response = await fetch('https://localhost:5219/api/Data', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -27,9 +27,9 @@ namespace brainfreeze_new.Server.Controllers
             return await _context.scoreboards.ToListAsync();
         }
 
-        // GET: api/Scoreboards/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Scoreboard>> GetScoreboard(int id)
+        // GET: api/Scoreboards/get-by-id/
+        [HttpGet("get-by-id/{id}")]
+        public async Task<ActionResult<Scoreboard>> GetScoreboardById(int id)
         {
             var scoreboard = await _context.scoreboards.FindAsync(id);
 
@@ -40,6 +40,28 @@ namespace brainfreeze_new.Server.Controllers
 
             return scoreboard;
         }
+
+        // GET: api/Scoreboards/get-by-username/
+        [HttpGet("get-by-username/{username}")]
+        public async Task<ActionResult<Scoreboard>> GetScoreboardByUsername(string username)
+        {
+            if (string.IsNullOrEmpty(username))
+            {
+                return BadRequest("Username is required");
+            }
+
+            var scoreboard = await _context.scoreboards
+                .FirstOrDefaultAsync(s => s.username == username);
+
+            if (scoreboard == null)
+            {
+                return Ok(new { message = "User not found" });
+            }
+
+            return Ok(scoreboard);
+        }
+
+
 
         // PUT: api/Scoreboards/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -74,11 +96,19 @@ namespace brainfreeze_new.Server.Controllers
         [HttpPost]
         public async Task<ActionResult<Scoreboard>> PostScoreboard(Scoreboard scoreboard)
         {
-            _context.scoreboards.Add(scoreboard);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.scoreboards.Add(scoreboard);
+                await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetScoreboard", new { id = scoreboard.id }, scoreboard);
+                return CreatedAtAction(nameof(GetScoreboardById), new { id = scoreboard.id }, scoreboard);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error creating user: " + ex.Message);
+            }
         }
+
 
         // DELETE: api/Scoreboards/5
         [HttpDelete("{id}")]

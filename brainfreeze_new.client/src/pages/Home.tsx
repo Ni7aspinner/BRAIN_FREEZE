@@ -17,20 +17,21 @@ export default function Home() {
 
     const fetchUsername = async () => {
         try {
-            const response = await fetch(`https://localhost:7005/api/Scoreboards`);
+            const tempid = localStorage.getItem("ID");
+            setID(tempid);
+            const response = await fetch(`https://localhost:7005/api/Scoreboards/get-by-id/${id}`);
             if (!response.ok) {
                 throw new Error(`Error fetching scores: ${response.statusText}`);
             }
-            const userId = Number(localStorage.getItem("ID"));
-            const data = await response.json();
 
-            const user = data.find((u: { id: number }) => u.id === userId);
+            const user = await response.json();
+
             if (user) {
                 setID(user.id.toString());
                 setUsername(user.username);
                 console.log(`User ID: ${user.id}, Username: ${user.username}`);
             } else {
-                console.warn(`User with ID ${userId} not found.`);
+                console.warn(`User ID not found.`);
             }
         } catch (error) {
             console.error("Error fetching user scores:", error);
@@ -43,7 +44,7 @@ export default function Home() {
 
     const setSecureId = () => {
         if (id) {
-            localStorage.setItem("ID", id); // Rewrites the ID to localStorage
+            localStorage.setItem("ID", id);
             console.log(`ID reset to: ${id}`);
         } else {
             console.error("No user ID found to set securely.");

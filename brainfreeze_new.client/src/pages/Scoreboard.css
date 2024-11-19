@@ -5,3 +5,32 @@
     height: 100vh;
     text-align: center;
 }
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  .scrollable-table-container {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+  
+  th {
+    cursor: pointer;
+    background-color: #f2f2f2;
+  }
+  

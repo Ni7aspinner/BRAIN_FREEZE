@@ -10,6 +10,9 @@ const Login = () => {
         if (token) {
             navigate("/home");
         }
+        else {
+            console.log("User not found returning to login");
+        }
     }, [navigate]);
 
     const fetchNewSessionId = async () => {
@@ -39,52 +42,76 @@ const Login = () => {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    username,
                     place: 0,
+                    username,
                     simonScore: 0,
                     cardflipScore: 0,
                     nrgScore: 0,
                 }),
             });
-
+    
             if (!response.ok) {
                 console.error("Error initializing database entry:", await response.text());
                 return null;
             }
-
+    
             const newUser = await response.json();
-            console.log(`New user added to the database: ${username}`);
+            console.log("New user added to the database:", newUser);
             return newUser.id;
         } catch (error) {
             console.error("Error initializing database entry:", error);
             return null;
         }
     };
-
+    
     const fetchUserScores = async () => {
         try {
-            const response = await fetch(`https://localhost:7005/api/Scoreboards`);
+            const response = await fetch(`https://localhost:7005/api/Scoreboards/get-by-username/${username}`);
+            
             if (!response.ok) {
+                if (response.status === 404) {
+                    const data = await response.json();
+                    if (data.message === "User not found") {
+                        console.log(`User not found. Creating entry for ${username}.`);
+                        const newUserId = await initializeDatabaseEntry();
+    
+                        if (newUserId === null) {
+                            alert("Failed to create user. Please try again.");
+                            return;
+                        }
+    
+                        const user = { id: newUserId, username };
+                        localStorage.setItem("ID", user.id.toString());
+                        console.log(`Logged in as user ID: ${user.id}`);
+    
+                        await fetchNewSessionId();
+                        navigate("/home");
+                        return;
+                    }
+                }
                 throw new Error(`Error fetching scores: ${response.statusText}`);
             }
-
-            const data = await response.json();
-            let user = data.find((u: { username: string }) => u.username === username);
-
-            if (!user) {
+    
+            let user = await response.json();
+            
+            if (!user || !user.id) {
                 console.log(`User not found. Creating entry for ${username}.`);
                 const newUserId = await initializeDatabaseEntry();
+    
                 if (newUserId === null) {
                     alert("Failed to create user. Please try again.");
                     return;
                 }
+    
                 user = { id: newUserId, username };
             }
-
+    
             localStorage.setItem("ID", user.id.toString());
             console.log(`Logged in as user ID: ${user.id}`);
+    
             await fetchNewSessionId();
             navigate("/home");
+    
         } catch (error) {
             console.error("Error fetching user scores:", error);
             console.log("Entering offline mode");
@@ -93,6 +120,9 @@ const Login = () => {
             navigate("/home");
         }
     };
+    
+    
+    
 
     const handleLogin = async () => {
         if (!username.trim()) {

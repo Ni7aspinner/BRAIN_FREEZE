@@ -32,3 +32,11 @@
   .image-button.flashing {
     background-color: yellow;
   }
+
+  .center {
+    display: flex;
+    justify-content: center;  /* Horizontally centers content */
+    align-items: center;      /* Vertically centers content */
+    height: 100vh;            /* Makes the container take up the full height of the viewport */
+    text-align: center;       /* Ensures the text inside is centered */
+  }

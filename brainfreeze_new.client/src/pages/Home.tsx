@@ -1,14 +1,52 @@
 import { Link, useNavigate } from 'react-router-dom';
 import './Home.css';
+import { useEffect, useState } from 'react';
 
 export default function Home() {
     const navigate = useNavigate();
-    const username = localStorage.getItem("token");
+    const [id, setID] = useState<string | null>(localStorage.getItem("ID"));
+    const [username, setUsername] = useState<string | null>(null);
+
     const handleClearTokens = () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('sessionId');
+        localStorage.clear();
         console.log('Token cleared!');
         navigate('/');
+    };
+
+    const fetchUsername = async () => {
+        try {
+            const tempid = localStorage.getItem("ID");
+            setID(tempid);
+            const response = await fetch(`https://localhost:7005/api/Scoreboards/get-by-id/${id}`);
+            if (!response.ok) {
+                throw new Error(`Error fetching scores: ${response.statusText}`);
+            }
+
+            const user = await response.json();
+
+            if (user) {
+                setID(user.id.toString());
+                setUsername(user.username);
+                console.log(`User ID: ${user.id}, Username: ${user.username}`);
+            } else {
+                console.warn(`User ID not found.`);
+            }
+        } catch (error) {
+            console.error("Error fetching user scores:", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchUsername();
+    }, []);
+
+    const setSecureId = () => {
+        if (id) {
+            localStorage.setItem("ID", id);
+            console.log(`ID reset to: ${id}`);
+        } else {
+            console.error("No user ID found to set securely.");
+        }
     };
 
     return (
@@ -18,10 +56,18 @@ export default function Home() {
                 Select a game to play!<br />And remember...
             </p>
             <div className="button-grid">
-                <Link to="/card-flip"><button className="game-button">Card Flip</button></Link>
-                <Link to="/simon"><button className="game-button">Simon</button></Link>
-                <Link to="/nrg"><button className="game-button">NRG</button></Link>
-                <Link to="/scoreboard"><button className="game-button">Scoreboard</button></Link>
+                <Link to="/card-flip">
+                    <button className="game-button" onClick={setSecureId}>Card Flip</button>
+                </Link>
+                <Link to="/simon">
+                    <button className="game-button" onClick={setSecureId}>Simon</button>
+                </Link>
+                <Link to="/nrg">
+                    <button className="game-button" onClick={setSecureId}>NRG</button>
+                </Link>
+                <Link to="/scoreboard">
+                    <button className="game-button" onClick={setSecureId}>Scoreboard</button>
+                </Link>
             </div>
 
             <div className="settings-container">

@@ -1,7 +1,36 @@
-.center {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh; 
+.login-input {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+}
+
+.login-button {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    background: #2193b0;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.login-button:hover {
+    background: #176f8a;
+}
+
+.login-box {
+    width: 300px;
+    margin: 0 auto;
     text-align: center;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }

@@ -15,6 +15,13 @@ namespace brainfreeze_new.Server.Controllers
             _logger = logger;
         }
 
+        [HttpPost("submitInitScore")]
+        public ActionResult SubmitInitScore([FromBody] ScoreData scoreData)
+        {
+            highScore = scoreData.Score;
+            return Ok(new { highScore });
+        }
+
         [HttpGet("shuffledImages")]
         public ActionResult GetShuffledImages()
         {

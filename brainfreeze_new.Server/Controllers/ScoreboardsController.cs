@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using brainfreeze_new.Server.Models;
+using brainfreeze_new.Server.Exceptions;
 
 namespace brainfreeze_new.Server.Controllers
 {
@@ -27,19 +28,69 @@ namespace brainfreeze_new.Server.Controllers
             return await _context.scoreboards.ToListAsync();
         }
 
-        // GET: api/Scoreboards/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Scoreboard>> GetScoreboard(int id)
+        [HttpGet("get-by-id/{id}")]
+        public async Task<ActionResult<Scoreboard>> GetScoreboardById(int id)
         {
-            var scoreboard = await _context.scoreboards.FindAsync(id);
-
-            if (scoreboard == null)
+            try
             {
-                return NotFound();
+                var scoreboard = await _context.scoreboards.FindAsync(id);
+
+                if (scoreboard == null)
+                {
+                    throw new ResourceNotFoundException($"Scoreboard with ID {id} not found.");
+                }
+
+                return scoreboard;
+            }
+            catch (ResourceNotFoundException ex)
+            {
+                LogException(ex);
+                return NotFound(new { error = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                LogException(ex);
+                return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred.");
+            }
+        }
+
+
+        // GET: api/Scoreboards/get-by-username/
+        [HttpGet("get-by-username/{username}")]
+        public async Task<ActionResult<Scoreboard>> GetScoreboardByUsername(string username)
+        {
+            if (string.IsNullOrEmpty(username))
+            {
+                return BadRequest("Username is required");
             }
 
-            return scoreboard;
+            try
+            {
+                var scoreboard = await _context.scoreboards
+                    .FirstOrDefaultAsync(s => s.username == username);
+
+                if (scoreboard == null)
+                {
+
+                    throw new ResourceNotFoundException($"Scoreboard with username '{username}' not found.");
+                }
+
+                return scoreboard;
+            }
+            catch (ResourceNotFoundException ex)
+            {
+                LogException(ex);
+                return NotFound(new { error = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                LogException(ex);
+                return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred.");
+            }
         }
+
+
+
 
         // PUT: api/Scoreboards/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -74,11 +125,19 @@ namespace brainfreeze_new.Server.Controllers
         [HttpPost]
         public async Task<ActionResult<Scoreboard>> PostScoreboard(Scoreboard scoreboard)
         {
-            _context.scoreboards.Add(scoreboard);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.scoreboards.Add(scoreboard);
+                await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetScoreboard", new { id = scoreboard.id }, scoreboard);
+                return CreatedAtAction(nameof(GetScoreboardById), new { id = scoreboard.id }, scoreboard);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error creating user: " + ex.Message);
+            }
         }
+
 
         // DELETE: api/Scoreboards/5
         [HttpDelete("{id}")]
@@ -94,11 +153,25 @@ namespace brainfreeze_new.Server.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
-        }
+        }   
 
         private bool ScoreboardExists(int id)
         {
             return _context.scoreboards.Any(e => e.id == id);
         }
+
+        private void LogException(Exception ex)
+        {
+            string basePath = AppDomain.CurrentDomain.BaseDirectory;
+            string directoryPath = Path.Combine(basePath, "logs");
+            string logPath = Path.Combine(directoryPath, "logs.log");
+            if (!Directory.Exists(directoryPath))
+            {
+                Directory.CreateDirectory(directoryPath);
+            }
+
+            System.IO.File.AppendAllText(logPath, $"{DateTime.Now}: {ex.Message}{Environment.NewLine}{ex.StackTrace}{Environment.NewLine}");
+        }
+
     }
 }

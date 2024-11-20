@@ -12,6 +12,7 @@ type Score = {
 export default function Scoreboard() {
   const [scores, setScores] = useState<Score[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [sortConfig, setSortConfig] = useState<{ key: keyof Score; direction: 'asc' | 'desc' } | null>(null);
 
   useEffect(() => {
     fetch('https://localhost:7005/api/Scoreboards')
@@ -26,6 +27,26 @@ export default function Scoreboard() {
       });
   }, []);
 
+  const handleSort = (key: keyof Score) => {
+    let direction: 'asc' | 'desc' = 'asc';
+    if (sortConfig && sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSortConfig({ key, direction });
+
+    const sortedScores = [...scores].sort((a, b) => {
+      if (a[key] < b[key]) {
+        return direction === 'asc' ? -1 : 1;
+      }
+      if (a[key] > b[key]) {
+        return direction === 'asc' ? 1 : -1;
+      }
+      return 0;
+    });
+
+    setScores(sortedScores);
+  };
+
   if (loading) {
     return <p>Loading scoreboard...</p>;
   }
@@ -36,11 +57,11 @@ export default function Scoreboard() {
         <table>
           <thead>
             <tr>
-              <th>Place</th>
-              <th>Player</th>
-              <th>Simon score</th>
-              <th>Cardflip score</th>
-              <th>NRG score</th>
+              <th onClick={() => handleSort('place')}>Place {sortConfig?.key === 'place' ? (sortConfig.direction === 'asc' ? '↑' : '↓') : ''}</th>
+              <th onClick={() => handleSort('username')}>Player {sortConfig?.key === 'username' ? (sortConfig.direction === 'asc' ? '↑' : '↓') : ''}</th>
+              <th onClick={() => handleSort('simonScore')}>Simon Score {sortConfig?.key === 'simonScore' ? (sortConfig.direction === 'asc' ? '↑' : '↓') : ''}</th>
+              <th onClick={() => handleSort('cardflipScore')}>Cardflip Score {sortConfig?.key === 'cardflipScore' ? (sortConfig.direction === 'asc' ? '↑' : '↓') : ''}</th>
+              <th onClick={() => handleSort('nrgScore')}>NRG Score {sortConfig?.key === 'nrgScore' ? (sortConfig.direction === 'asc' ? '↑' : '↓') : ''}</th>
             </tr>
           </thead>
           <tbody>
@@ -56,7 +77,7 @@ export default function Scoreboard() {
               ))
             ) : (
               <tr>
-                <td colSpan={3}>No scores available</td>
+                <td colSpan={5}>No scores available</td>
               </tr>
             )}
           </tbody>

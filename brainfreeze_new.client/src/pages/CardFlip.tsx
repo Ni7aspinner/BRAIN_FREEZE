@@ -14,7 +14,7 @@ const CardFlip = () => {
 
   const fetchShuffledImages = async () => {
     try {
-      const response = await fetch('http://localhost:5219/api/cardflip/shuffledImages');
+      const response = await fetch('https://localhost:5219/api/cardflip/shuffledImages');
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
@@ -39,7 +39,7 @@ const CardFlip = () => {
 
     const fetchHighScore = async () => {
       try {
-        const highScoreResponse = await fetch('http://localhost:5219/api/cardflip/highscore');
+        const highScoreResponse = await fetch('https://localhost:5219/api/cardflip/highscore');
         if (highScoreResponse.ok) {
           const highScoreData = await highScoreResponse.json();
           setHighScore(highScoreData.highScore);
@@ -96,7 +96,7 @@ const CardFlip = () => {
 
   const submitScore = async (finalScore: number) => {
     try {
-      const response = await fetch('http://localhost:5219/api/cardflip/submitScore', {
+      const response = await fetch('https://localhost:5219/api/cardflip/submitScore', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ score: finalScore })

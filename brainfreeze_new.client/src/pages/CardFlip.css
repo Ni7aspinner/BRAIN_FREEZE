@@ -1,27 +1,28 @@
-#root {
+
+.root {
   max-width: 1280px;
   margin: 0 auto;
   text-align: center;
 }
+
 .grid-container {
   display: grid;
   grid-template-columns: repeat(6, 150px);
   grid-column-gap: 5px;
   grid-row-gap: 5px;
-  justify-content: center;         /* Horizontally center the grid items */
+  justify-content: center;
   width: auto;
 }
 
 .card {
   perspective: 1000px;
-  cursor: pointer
+  cursor: pointer;
 }
 
 .card:hover .card-inner {
   transform: scale(1.05);
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
 }
-
 
 .card-inner {
   position: relative;
@@ -32,7 +33,7 @@
 }
 
 .card.flipped .card-inner {
-  transform: rotateY(180deg);
+  transform: rotateY(180deg); 
 }
 
 .card-front,
@@ -62,14 +63,6 @@
   height: 150px;
   object-fit: cover;
   border-radius: 15px;
-}
-
-.center {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  text-align: center;
 }
 
 .placeholder {

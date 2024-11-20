@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Concurrent;
 
 namespace brainfreeze_new.Server.Controllers
 {
@@ -7,14 +8,13 @@ namespace brainfreeze_new.Server.Controllers
     public class CardFlipController : ControllerBase
     {
         private readonly ILogger<CardFlipController> _logger;
-        private static int highScore = 0; 
+        private static readonly ConcurrentDictionary<string, int> HighScores = new ConcurrentDictionary<string, int>();
 
         public CardFlipController(ILogger<CardFlipController> logger)
         {
             _logger = logger;
         }
 
-        
         [HttpGet("shuffledImages")]
         public ActionResult GetShuffledImages()
         {
@@ -22,29 +22,30 @@ namespace brainfreeze_new.Server.Controllers
             return Ok(new { shuffledImages });
         }
 
-        
         [HttpGet("highscore")]
         public ActionResult GetHighScore()
         {
+            HighScores.TryGetValue("globalHighScore", out int highScore);
             return Ok(new { highScore });
         }
 
-        
         [HttpPost("submitScore")]
         public ActionResult SubmitScore([FromBody] ScoreData scoreData)
         {
-            if (highScore == 0 || scoreData.Score < highScore) // If high score is 0 or the new score is better
-            {
-                highScore = scoreData.Score;
-                _logger.LogInformation($"New high score: {highScore}");
-                return Ok(new { newHighScore = true });
-            }
+            HighScores.AddOrUpdate("globalHighScore",
+                scoreData.Score, 
+                (key, currentHighScore) => scoreData.Score < currentHighScore ? scoreData.Score : currentHighScore);
 
-            _logger.LogInformation($"Score submitted: {scoreData.Score}");
-            return Ok(new { newHighScore = false });
+            HighScores.TryGetValue("globalHighScore", out int newHighScore);
+            bool isNewHighScore = newHighScore == scoreData.Score;
+
+            _logger.LogInformation(isNewHighScore
+                ? $"New high score: {newHighScore}"
+                : $"Score submitted: {scoreData.Score}");
+
+            return Ok(new { newHighScore = isNewHighScore });
         }
 
-        
         private List<string> GetShuffledImageList()
         {
             var images = new List<string>
@@ -54,10 +55,8 @@ namespace brainfreeze_new.Server.Controllers
                 "src/assets/icecream.png"
             };
 
-           
             var allImages = images.Concat(images).ToList();
 
-            
             Random rand = new Random();
             for (int i = allImages.Count - 1; i > 0; i--)
             {

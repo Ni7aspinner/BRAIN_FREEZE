@@ -99,7 +99,7 @@ namespace brainfreeze_new.Server.Controllers
         {
             scoreboard.id = id;
 
-            _context.Entry(scoreboard).State = EntityState.Modified;
+            _context.Entry(scoreboard).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
 
             try
             {

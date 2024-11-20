@@ -21,8 +21,6 @@ namespace brainfreeze_new.Server
         public int Level => CreatedList.Count;
         public List<X> ExpectedList { get; set; } = [];
 
-        public int Difficulty { get; set; }
-
         public bool Equals()
         {
             if (_createdList.Count != ExpectedList.Count) return false;
@@ -30,6 +28,11 @@ namespace brainfreeze_new.Server
             for (int i = 0; i < _createdList.Count; i++) { if (!_createdList[i].Equals(ExpectedList[i])) return false; }
 
             return true;
+        }
+        public bool FirstElementEqualTo(X value)
+        {
+            if (CreatedList.Count > 0 && CreatedList[0].Equals(value)) return true;
+            return false;
         }
     }
 

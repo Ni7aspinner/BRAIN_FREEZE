@@ -11,6 +11,7 @@ const CardFlip = () => {
   const [highScore, setHighScore] = useState<number | null>(null);
   const [isResetting, setIsResetting] = useState<boolean>(false);
   const [isReady, setIsReady] = useState<boolean>(true); // Track when the game is ready to display cards
+  const [id] = useState<number | null>(Number(localStorage.getItem("ID")));
 
   const fetchShuffledImages = async () => {
     try {
@@ -33,23 +34,60 @@ const CardFlip = () => {
     }
   };
 
-  
-  useEffect(() => {
-    fetchShuffledImages();
-
-    const fetchHighScore = async () => {
-      try {
-        const highScoreResponse = await fetch('https://localhost:5219/api/cardflip/highscore');
-        if (highScoreResponse.ok) {
-          const highScoreData = await highScoreResponse.json();
-          setHighScore(highScoreData.highScore);
-        }
-      } catch (err) {
-        setError('Error fetching high score');
+  const setIdForScore = async () => {
+    try {
+      const response = await fetch(`https://localhost:7005/api/Scoreboards/get-by-id/${id}`);
+      if (!response.ok) {
+        console.log(response);
+        throw new Error(`HTTP error! Status: ${response.status}`);
       }
-    };
 
-    fetchHighScore();
+      const user = await response.json();
+      setHighScore(user.cardflipScore);
+      localStorage.setItem("CardFlip", user.cardflipScore);
+
+    } catch (error) {
+      console.log("is this the error??");
+    }
+  };
+  
+  const putDbHighScore = async () => {
+    try {
+      const fetchResponse = await fetch(`https://localhost:7005/api/Scoreboards/get-by-id/${id}`);
+      if (!fetchResponse.ok) {
+          throw new Error(`Error fetching user: ${fetchResponse.statusText}`);
+      }
+
+      const user = await fetchResponse.json();
+      if (user) {
+        const updatedUser = { ...user, cardflipScore: highScore };
+
+        const putResponse = await fetch(`https://localhost:7005/api/Scoreboards/${id}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(updatedUser),
+        });
+
+        if (!putResponse.ok) {
+            throw new Error(`Error updating user: ${putResponse.statusText}`);
+        }
+
+        console.log(`User with ID ${id} updated successfully.`);
+
+    } else {
+        console.warn(`User with ID ${id} not found.`);
+    }
+    } catch (error) {
+        console.error("Error updating user score:", error);
+    }
+  };
+
+  useEffect(() => {
+    setIdForScore();
+    submitInitScore(Number(highScore));
+    fetchShuffledImages();
   }, []);
 
   
@@ -80,7 +118,7 @@ const CardFlip = () => {
       setSelectedCards([]);
 
       if (newMatchedCards.every(Boolean)) {
-        submitScore(moveCount + 1);  
+        submitScore(moveCount + 1);
       }
     } else {
       setTimeout(() => {
@@ -90,6 +128,20 @@ const CardFlip = () => {
         setFlippedCards(newFlippedCards);
         setSelectedCards([]);
       }, 1000);
+    }
+  };
+
+
+  const submitInitScore = async (initScore: number) => {
+    try {
+      const response = await fetch('https://localhost:5219/api/cardflip/submitInitScore', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ score: initScore })
+      });
+      console.log(response);
+    } catch (err) {
+      setError('Failed to submit score');
     }
   };
 
@@ -105,7 +157,8 @@ const CardFlip = () => {
       if (response.ok) {
         const data = await response.json();
         if (data.newHighScore) {
-          setHighScore(finalScore); 
+          setHighScore(finalScore);
+          localStorage.setItem("CardFlip", String(highScore));
         }
       }
     } catch (err) {

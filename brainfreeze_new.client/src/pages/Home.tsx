@@ -8,9 +8,7 @@ export default function Home() {
     const [username, setUsername] = useState<string | null>(null);
 
     const handleClearTokens = () => {
-        localStorage.removeItem('ID');
-        localStorage.removeItem('sessionId');
-        localStorage.removeItem('Simon');
+        localStorage.clear();
         console.log('Token cleared!');
         navigate('/');
     };

@@ -69,7 +69,7 @@ namespace brainfreeze_new.Server.Controllers
                 var scoreboard = await _context.scoreboards
                     .FirstOrDefaultAsync(s => s.username == username);
 
-                if (scoreboard != null)
+                if (scoreboard == null)
                 {
 
                     throw new ResourceNotFoundException($"Scoreboard with username '{username}' not found.");

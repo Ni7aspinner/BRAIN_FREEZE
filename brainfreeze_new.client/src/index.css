@@ -37,18 +37,18 @@ h1 {
 }
 
 button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #00111c;
-  cursor: pointer;
-  transition: border-color 0.25s;
+    border-radius: 8px;
+    border: 2px solid transparent;
+    padding: 0.6em 1.2em;
+    font-size: 1em;
+    font-weight: 500;
+    font-family: inherit;
+    background-color: #00111c;
+    cursor: pointer;
+    transition: border-color 0.25s;
 }
 button:hover {
-  border-color: #646cff00;
+  border-color: #646cff;
 }
 
 
@@ -64,16 +64,15 @@ button:hover {
     background-color: #f9f9f9;
   }
 }
-header{
-  display: flex;
-  margin-left: auto;
-
-  height: 1%;
-  width: 100%;          
-  padding: 0;
-  margin: 0; 
-  background-color: #00111c;
-  
+header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 1%;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    background-color: #ffffff;
 }
 footer {
   margin-top: auto;

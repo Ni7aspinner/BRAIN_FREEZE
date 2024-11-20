@@ -5,39 +5,37 @@ namespace brainfreeze_new.Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class IncController : ControllerBase
+    public class NRGController : ControllerBase
     {
-        private readonly ILogger<IncController> _logger;
+        private readonly ILogger<NRGController> _logger;
 
-        public IncController(ILogger<IncController> logger)             
+        public NRGController(ILogger<NRGController> logger)
         {
             _logger = logger;
         }
         public record ResponseData(Data Data, string Message);
-
-        // Generates and returns Data type object with a list of random integers
-        [HttpGet(Name = "GetData")]
-        public ActionResult<Data> Get([FromQuery] DifficultyLevel level)
+        [HttpGet(Name = "GetDataNRG")]
+        public ActionResult<Data> Get(DifficultyLevel level = DifficultyLevel.VeryEasy)
         {
             Data sequence = new Data();
             if (level == DifficultyLevel.Custom)
             {
                 CustomList(sequence);
-            } else
+            }
+            else
             {
                 for (int i = 0; i < (int)level; i++)
                 {
-                    ModifyList(sequence, max: 10);
+                    ModifyList(sequence, max: 25);
                 }
             }
-            return Ok(new ResponseData(sequence, "Game Started!"));
+            return Ok(new ResponseData(sequence, "Game started!"));
         }
 
         // Validates and processes received data
-        [HttpPost(Name = "AddData")]
-        public ActionResult<Data> Add([FromBody] Data sequence)
+        [HttpPost(Name = "AddDataNRG")]
+        public ActionResult<Data> Add([FromBody] Data sequence, DifficultyLevel level = DifficultyLevel.VeryEasy)
         {
-            int level = sequence.Difficulty;
             Console.WriteLine($"Sent back data:\nArray size: {sequence.ExpectedList.Count}");
             if (sequence is null || sequence.CreatedList is null || sequence.ExpectedList is null)
             {
@@ -47,8 +45,7 @@ namespace brainfreeze_new.Server.Controllers
             {
                 if (new Check(sequence).AreEqual)
                 {
-                    sequence.ExpectedList.Clear();
-                    ModifyList(sequence);
+                    CreateLists(sequence, level:sequence.Level+1);
                     return Ok(new ResponseData(sequence, "Congrats player!"));
                 }
                 return Ok(new ResponseData(sequence, "Proceed"));
@@ -56,27 +53,26 @@ namespace brainfreeze_new.Server.Controllers
             else
             {
                 Data newSequence = new();
-                if(level == (int)DifficultyLevel.Custom)
-                {
-                    CustomList(newSequence);
-                }
-                else
-                {
-                    for (int i = 0; i < (int)level; i++)
-                    {
-                        ModifyList(newSequence);
-                    }
-                }
+                CreateLists(newSequence);
                 Console.WriteLine($"Returning new sequence");
                 return Ok(new ResponseData(newSequence, "Loser!"));
             }
         }
-
-        static private void ModifyList(Data data, int min=1, int max=10)
+        static private void ModifyList(Data data, int min = 0, int max = 25)
         {
             int createdNum = Random.Shared.Next(min, max);
+            while (data.CreatedList.Contains(createdNum)) createdNum = Random.Shared.Next(min, max); //temporary
             object o = createdNum;
             data.CreatedList.Add(o);
+        }
+        static private void CreateLists(Data newSequence, int min = 0, int max = 25, int level=4)
+        {
+            newSequence.CreatedList.Clear();
+            newSequence.ExpectedList.Clear();
+            for (int i = 0; i < (int)level; i++)
+            {
+                ModifyList(newSequence, max: 25);
+            }
         }
 
         //Creates and applies custom list from Challenge.txt file
@@ -84,41 +80,33 @@ namespace brainfreeze_new.Server.Controllers
         {
             try
             {
-                using StreamReader reader = new("Challenge.txt");
+                StreamReader reader = new("Challenge.txt");
+
                 data.CreatedList.Clear();
                 string? challengeData = reader.ReadLine();
-                char[] separator = [' ', ','];
 
                 if (challengeData != null)
                 {
                     List<object> challengeDataList = challengeData
-                    .Split(separator, StringSplitOptions.RemoveEmptyEntries)
+                    .Split(new char[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries)
                     .Select(int.Parse)
                     .Cast<object>().ToList();
 
                     data.CreatedList = challengeDataList;
                 }
-
-
             }
             catch (Exception)
             {
                 throw;
             }
         }
-        
+
         private static bool ShortCheck(Data sequence)
         {
             // Ensure both lists are of equal length or that createdList is longer than expectedList
             if (sequence.CreatedList.Count < sequence.ExpectedList.Count)
             {
                 return false;
-            }
-
-            // Handles starting list of 1
-            if (sequence.CreatedList.Count == 1 && sequence.ExpectedList.Count == 1 && new Check(sequence).AreEqual)
-            {
-                return true;
             }
 
             for (int i = 0; i < sequence.ExpectedList.Count; i++)
@@ -157,7 +145,7 @@ namespace brainfreeze_new.Server.Controllers
         // to later use object to include also different types of information
         public readonly struct Check
         {
-           public bool AreEqual { get; } = false;
+            public bool AreEqual { get; } = false;
             public Check(Data sequence)
             {
 
@@ -191,15 +179,4 @@ namespace brainfreeze_new.Server.Controllers
         }
     }
 
-    public enum DifficultyLevel
-    {
-        MainStart = 1,
-        VeryEasy = 4,
-        Easy = 5,
-        Normal = 6,
-        Hard = 7,
-        Nightmare = 8,
-        Impossible = 9,
-        Custom = 0
-    }
 }

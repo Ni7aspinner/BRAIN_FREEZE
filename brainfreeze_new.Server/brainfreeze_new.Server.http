@@ -7,3 +7,11 @@ Accept: application/json
 ### POST Request
 POST {{brainfreeze_new.Server_HostAddress}}/api/Inc
 Accept: application/json
+
+### GET Request
+GET {{brainfreeze_new.Server_HostAddress}}/api/NRG
+Accept: application/json
+
+### POST Request
+POST {{brainfreeze_new.Server_HostAddress}}/api/NRG
+Accept: application/json

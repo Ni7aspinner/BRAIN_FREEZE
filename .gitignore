@@ -2,6 +2,8 @@ brainfreeze_new.Server/obj/
 brainfreeze_new.client/obj/
 brainfreeze_new.Server/bin/
 brainfreeze_new.client/bin/
+brainfreeze_new.Tests/bin/
+brainfreeze_new.Tests/obj/
 
 .vs/
 *.suo
@@ -17,6 +19,7 @@ brainfreeze_new.client/bin/
 *.dll
 *.exe
 *.json
+*.tsbuildinfo
 
 logs
 *.log

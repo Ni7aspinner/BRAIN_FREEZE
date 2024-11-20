@@ -24,6 +24,8 @@ namespace brainfreeze_new.Server
         public int Level => CreatedList.Count;
         public List<object> ExpectedList { get; set; } = [];
 
+        public int Difficulty {  get; set; }
+
     }
 
 }

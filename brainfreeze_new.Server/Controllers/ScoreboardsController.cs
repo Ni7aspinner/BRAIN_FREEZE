@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using brainfreeze_new.Server.Models;
+using System.Data.Entity;
 
 namespace brainfreeze_new.Server.Controllers
 {
@@ -48,7 +49,7 @@ namespace brainfreeze_new.Server.Controllers
         {
             scoreboard.id = id;
 
-            _context.Entry(scoreboard).State = EntityState.Modified;
+            _context.Entry(scoreboard).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
 
             try
             {

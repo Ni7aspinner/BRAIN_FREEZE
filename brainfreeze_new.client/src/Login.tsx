@@ -70,26 +70,21 @@ const Login = () => {
             
             if (!response.ok) {
                 if (response.status === 404) {
-                    const data = await response.json();
-                    if (data.message === "User not found") {
-                        console.log(`User not found. Creating entry for ${username}.`);
-                        const newUserId = await initializeDatabaseEntry();
-    
-                        if (newUserId === null) {
-                            alert("Failed to create user. Please try again.");
-                            return;
-                        }
-    
-                        const user = { id: newUserId, username };
+                    console.log("Trying to create a new user");
+                    const newUserId = await initializeDatabaseEntry();
+
+                    const user = { id: newUserId, username };
+                    if(user.id){
                         localStorage.setItem("ID", user.id.toString());
                         console.log(`Logged in as user ID: ${user.id}`);
-    
+
                         await fetchNewSessionId();
                         navigate("/home");
                         return;
+                    } else {
+                        throw new Error(`Error fetching scores: ${response.statusText}`);
                     }
                 }
-                throw new Error(`Error fetching scores: ${response.statusText}`);
             }
     
             let user = await response.json();

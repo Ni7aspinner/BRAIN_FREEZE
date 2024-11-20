@@ -34,7 +34,7 @@ function Simon() {
   const [hasFlashed, setHasFlashed] = useState<boolean>(false);
   const [gameMode, setGameMode] = useState<GameMode>(GameMode.Main); 
   const [currentDifficulty, setCurrentDifficulty] = useState<Difficulty>(Difficulty.MainStart);
-  const [id, setID] = useState<string | null>(localStorage.getItem("ID"));
+  const [id] = useState<string | null>(localStorage.getItem("ID"));
 
   const contents = datas === undefined
       ? <p><em>Loading... </em></p>

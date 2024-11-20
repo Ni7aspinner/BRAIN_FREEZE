@@ -34,6 +34,7 @@ function Simon() {
   const [hasFlashed, setHasFlashed] = useState<boolean>(false);
   const [gameMode, setGameMode] = useState<GameMode>(GameMode.Main); 
   const [currentDifficulty, setCurrentDifficulty] = useState<Difficulty>(Difficulty.MainStart);
+  const [id] = useState<string | null>(localStorage.getItem("ID"));
 
   const contents = datas === undefined
       ? <p><em>Loading... </em></p>
@@ -60,6 +61,7 @@ function Simon() {
   ];
 
   useEffect(() => {
+    fetchSimonScore();
     populateData();
   }, []);
 
@@ -82,6 +84,63 @@ function Simon() {
         // After this data is populated, so the other effect is triggered and flashing starts again
     }
   }, [gameMode, currentDifficulty]);
+
+  const fetchSimonScore = async () => {
+    try {
+        const response = await fetch(`https://localhost:7005/api/Scoreboards/get-by-id/${id}`);
+        if (!response.ok) {
+            throw new Error(`Error fetching scores: ${response.statusText}`);
+        }
+
+        const user = await response.json();
+
+        if (user) {
+            localStorage.setItem("Simon", user.simonScore)
+            console.log(user.simonScore)
+        } else {
+            console.warn(`User with ID ${user.id} not found.`);
+        }
+    } catch (error) {
+        console.error("Error fetching user scores:", error);
+    }
+};
+
+const putScore = async (newSimonScore: number) => {
+  try {
+      console.log(id);
+      const fetchResponse = await fetch(`https://localhost:7005/api/Scoreboards/get-by-id/${id}`);
+      if (!fetchResponse.ok) {
+          throw new Error(`Error fetching user: ${fetchResponse.statusText}`);
+      }
+
+      const user = await fetchResponse.json();
+
+      if (user) {
+          const updatedUser = { ...user, simonScore: newSimonScore };
+
+          const putResponse = await fetch(`https://localhost:7005/api/Scoreboards/${id}`, {
+              method: "PUT",
+              headers: {
+                  "Content-Type": "application/json",
+              },
+              body: JSON.stringify(updatedUser),
+          });
+
+          if (!putResponse.ok) {
+              throw new Error(`Error updating user: ${putResponse.statusText}`);
+          }
+
+          console.log(`User with ID ${id} updated successfully.`);
+          localStorage.setItem("Simon", updatedUser.simonScore.toString());
+      } else {
+          console.warn(`User with ID ${id} not found.`);
+      }
+  } catch (error) {
+      console.error("Error updating user score:", error);
+  }
+};
+
+
 
     const evaluateScore = async (userInput: number[], datas: Data) => {
 
@@ -107,17 +166,22 @@ function Simon() {
 
       const result = await response.json();
       setScore(result.score); 
+      const previousHighScore = Number(localStorage.getItem('Simon')) || 0;
+      if (result.score > previousHighScore) {
+        localStorage.setItem('Simon', result.score.toString());
+        putScore(result.score);
+      }
     } catch (error) {
       console.error('Failed to evaluate score:', error);
     }
   };
-
+  
   // Fetches data for the game
 
   const populateData = async () => {
     try {
         console.log('Populating data');
-        const response = await fetch(`https://localhost:7005/api/Inc?level=${currentDifficulty}`, {
+        const response = await fetch(`https://localhost:7005/api/Data?level=${currentDifficulty}`, {
             method: 'GET'
         });
         if (!response.ok) {       
@@ -172,7 +236,7 @@ function Simon() {
             difficulty: currentDifficulty
         };
       
-      const response = await fetch('https://localhost:5219/api/Inc', {
+      const response = await fetch('https://localhost:5219/api/Data', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

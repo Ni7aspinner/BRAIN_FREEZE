@@ -17,12 +17,12 @@ namespace brainfreeze_new.Server.Controllers
 
         // Generates and returns Data type object with a list of random integers
         [HttpGet(Name = "GetData")]
-        public ActionResult<Data> Get([FromQuery] DifficultyLevel level)
+        public async Task<ActionResult<Data>> Get([FromQuery] DifficultyLevel level)
         {
-            Data sequence = new Data();
+            Data sequence = new();
             if (level == DifficultyLevel.Custom)
             {
-                CustomList(sequence);
+                await CustomList(sequence);
             } else
             {
                 for (int i = 0; i < (int)level; i++)
@@ -35,14 +35,14 @@ namespace brainfreeze_new.Server.Controllers
 
         // Validates and processes received data
         [HttpPost(Name = "AddData")]
-        public ActionResult<Data> Add([FromBody] Data sequence)
+        public async Task<ActionResult<Data>> Add([FromBody] Data? sequence)
         {
-            int level = sequence.Difficulty;
-            Console.WriteLine($"Sent back data:\nArray size: {sequence.ExpectedList.Count}");
             if (sequence is null || sequence.CreatedList is null || sequence.ExpectedList is null)
             {
                 return BadRequest("Invalid data");
             }
+            int level = sequence.Difficulty;
+            Console.WriteLine($"Sent back data:\nArray size: {sequence.ExpectedList.Count}");
             if (ShortCheck(sequence))
             {
                 if (new Check(sequence).AreEqual)
@@ -58,7 +58,7 @@ namespace brainfreeze_new.Server.Controllers
                 Data newSequence = new();
                 if(level == (int)DifficultyLevel.Custom)
                 {
-                    CustomList(newSequence);
+                    await CustomList(newSequence);
                 }
                 else
                 {
@@ -80,13 +80,13 @@ namespace brainfreeze_new.Server.Controllers
         }
 
         //Creates and applies custom list from Challenge.txt file
-        static private void CustomList(Data data)
+        static private async Task CustomList(Data data)
         {
             try
             {
                 using StreamReader reader = new("Challenge.txt");
                 data.CreatedList.Clear();
-                string? challengeData = reader.ReadLine();
+                string? challengeData = await reader.ReadLineAsync();
                 char[] separator = [' ', ','];
 
                 if (challengeData != null)
@@ -98,59 +98,46 @@ namespace brainfreeze_new.Server.Controllers
 
                     data.CreatedList = challengeDataList;
                 }
-
-
             }
             catch (Exception)
             {
                 throw;
             }
         }
-        
         private static bool ShortCheck(Data sequence)
         {
-            // Ensure both lists are of equal length or that createdList is longer than expectedList
+            // Ensure both lists are non-null
+            if (sequence.CreatedList == null || sequence.ExpectedList == null)
+            {
+                return false;
+            }
+
+            // Ensure CreatedList is at least as long as ExpectedList
             if (sequence.CreatedList.Count < sequence.ExpectedList.Count)
             {
                 return false;
             }
 
-            // Handles starting list of 1
-            if (sequence.CreatedList.Count == 1 && sequence.ExpectedList.Count == 1 && new Check(sequence).AreEqual)
-            {
-                return true;
-            }
+            // Convert ExpectedList to integers
+            var expectedListInts = sequence.ExpectedList
+                .Select(item => item is JsonElement jsonElement ? jsonElement.GetInt32() : (int)item)
+                .ToList();
 
+            // Convert CreatedList to integers
+            var createdListInts = sequence.CreatedList
+                .Select(item => item is JsonElement jsonElement ? jsonElement.GetInt32() : (int)item)
+                .ToList();
+
+            // Compare corresponding elements
             for (int i = 0; i < sequence.ExpectedList.Count; i++)
             {
-                // Convert elements in both lists to integers using TryGetInt32
-                if (sequence.CreatedList[i] is JsonElement createdElement
-                    && sequence.ExpectedList[i] is JsonElement expectedElement)
+                if (expectedListInts[i] != createdListInts[i])
                 {
-                    if (createdElement.ValueKind == JsonValueKind.Number
-                        && expectedElement.ValueKind == JsonValueKind.Number)
-                    {
-                        int createdInt = createdElement.GetInt32();
-                        int expectedInt = expectedElement.GetInt32();
-
-                        // Compare the two integers
-                        if (createdInt != expectedInt) return false;
-                    }
-                    else
-                    {
-                        // If either is not a number, return false
-                        return false;
-                    }
-                }
-                else
-                {
-                    // If either element is not a JsonElement, return false
                     return false;
                 }
             }
 
-            // Return true if all comparisons passed
-            return true;
+            return true; // Return true if all comparisons passed
         }
 
         // Checks to see if the sequence is ok. Has to deserialize from json if we want

@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using brainfreeze_new.Server.Models;
-using System.Data.Entity;
 using brainfreeze_new.Server.Exceptions;
 
 namespace brainfreeze_new.Server.Controllers

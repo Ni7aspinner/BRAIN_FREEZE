@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using brainfreeze_new.Server.Models;
+using brainfreeze_new.Server.Exceptions;
 
 namespace brainfreeze_new.Server.Controllers
 {
@@ -27,19 +28,32 @@ namespace brainfreeze_new.Server.Controllers
             return await _context.scoreboards.ToListAsync();
         }
 
-        // GET: api/Scoreboards/get-by-id/
         [HttpGet("get-by-id/{id}")]
         public async Task<ActionResult<Scoreboard>> GetScoreboardById(int id)
         {
-            var scoreboard = await _context.scoreboards.FindAsync(id);
-
-            if (scoreboard == null)
+            try
             {
-                return NotFound();
-            }
+                var scoreboard = await _context.scoreboards.FindAsync(id);
 
-            return scoreboard;
+                if (scoreboard == null)
+                {
+                    throw new ResourceNotFoundException($"Scoreboard with ID {id} not found.");
+                }
+
+                return scoreboard;
+            }
+            catch (ResourceNotFoundException ex)
+            {
+                LogException(ex);
+                return NotFound(new { error = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                LogException(ex);
+                return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred.");
+            }
         }
+
 
         // GET: api/Scoreboards/get-by-username/
         [HttpGet("get-by-username/{username}")]
@@ -50,16 +64,31 @@ namespace brainfreeze_new.Server.Controllers
                 return BadRequest("Username is required");
             }
 
-            var scoreboard = await _context.scoreboards
-                .FirstOrDefaultAsync(s => s.username == username);
-
-            if (scoreboard == null)
+            try
             {
-                return Ok(new { message = "User not found" });
-            }
+                var scoreboard = await _context.scoreboards
+                    .FirstOrDefaultAsync(s => s.username == username);
 
-            return Ok(scoreboard);
+                if (scoreboard != null)
+                {
+
+                    throw new ResourceNotFoundException($"Scoreboard with username '{username}' not found.");
+                }
+
+                return scoreboard;
+            }
+            catch (ResourceNotFoundException ex)
+            {
+                LogException(ex);
+                return NotFound(new { error = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                LogException(ex);
+                return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred.");
+            }
         }
+
 
 
 
@@ -130,5 +159,19 @@ namespace brainfreeze_new.Server.Controllers
         {
             return _context.scoreboards.Any(e => e.id == id);
         }
+
+        private void LogException(Exception ex)
+        {
+            string basePath = AppDomain.CurrentDomain.BaseDirectory;
+            string directoryPath = Path.Combine(basePath, "logs");
+            string logPath = Path.Combine(directoryPath, "logs.log");
+            if (!Directory.Exists(directoryPath))
+            {
+                Directory.CreateDirectory(directoryPath);
+            }
+
+            System.IO.File.AppendAllText(logPath, $"{DateTime.Now}: {ex.Message}{Environment.NewLine}{ex.StackTrace}{Environment.NewLine}");
+        }
+
     }
 }

@@ -18,7 +18,7 @@ namespace brainfreeze_new.Server.Controllers
         [HttpPost("submitInitScore")]
         public ActionResult SubmitInitScore([FromBody] ScoreData scoreData)
         {
-            highScore = scoreData.Score;
+            int highScore = scoreData.Score;
             return Ok(new { highScore });
         }
 

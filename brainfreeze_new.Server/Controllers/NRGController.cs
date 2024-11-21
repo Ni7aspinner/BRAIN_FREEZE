@@ -33,7 +33,7 @@ namespace brainfreeze_new.Server.Controllers
             {
                 return BadRequest("Invalid data");
             }
-            if (sequence.Equals())
+            if (sequence.Equal())
             {
                 CreateLists(sequence, level:sequence.Level+1);
                 return Ok(new ResponseData(sequence, "Congrats player!"));

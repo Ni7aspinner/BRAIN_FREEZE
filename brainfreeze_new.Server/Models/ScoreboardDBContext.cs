@@ -2,13 +2,8 @@
 
 namespace brainfreeze_new.Server.Models
 {
-    public class ScoreboardDBContext : DbContext
+    public class ScoreboardDBContext(DbContextOptions<ScoreboardDBContext> options) : DbContext(options)
     {
-        public ScoreboardDBContext(DbContextOptions<ScoreboardDBContext> options):base(options)
-        {
-
-        }
-
-        public DbSet<Scoreboard> scoreboards { get; set; }
+        public DbSet<Scoreboard> Scoreboards { get; set; }
     }
 }

@@ -12,20 +12,15 @@ namespace brainfreeze_new.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ScoreboardsController : ControllerBase
+    public class ScoreboardsController(ScoreboardDBContext context) : ControllerBase
     {
-        private readonly ScoreboardDBContext _context;
-
-        public ScoreboardsController(ScoreboardDBContext context)
-        {
-            _context = context;
-        }
+        private readonly ScoreboardDBContext _context = context;
 
         // GET: api/Scoreboards
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Scoreboard>>> Getscoreboards()
         {
-            return await _context.scoreboards.ToListAsync();
+            return await _context.Scoreboards.ToListAsync();
         }
 
         [HttpGet("get-by-id/{id}")]
@@ -33,14 +28,9 @@ namespace brainfreeze_new.Server.Controllers
         {
             try
             {
-                var scoreboard = await _context.scoreboards.FindAsync(id);
+                var scoreboard = await _context.Scoreboards.FindAsync(id);
 
-                if (scoreboard == null)
-                {
-                    throw new ResourceNotFoundException($"Scoreboard with ID {id} not found.");
-                }
-
-                return scoreboard;
+                return scoreboard == null ? throw new ResourceNotFoundException($"Scoreboard with ID {id} not found.") : (ActionResult<Scoreboard>)scoreboard;
             }
             catch (ResourceNotFoundException ex)
             {
@@ -66,8 +56,8 @@ namespace brainfreeze_new.Server.Controllers
 
             try
             {
-                var scoreboard = await _context.scoreboards
-                    .FirstOrDefaultAsync(s => s.username == username);
+                var scoreboard = await _context.Scoreboards
+                    .FirstOrDefaultAsync(s => s.Username == username);
 
                 if (scoreboard == null)
                 {
@@ -97,7 +87,7 @@ namespace brainfreeze_new.Server.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutScoreboard(int id, Scoreboard scoreboard)
         {
-            scoreboard.id = id;
+            scoreboard.Id = id;
 
             _context.Entry(scoreboard).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
 
@@ -127,10 +117,10 @@ namespace brainfreeze_new.Server.Controllers
         {
             try
             {
-                _context.scoreboards.Add(scoreboard);
+                _context.Scoreboards.Add(scoreboard);
                 await _context.SaveChangesAsync();
 
-                return CreatedAtAction(nameof(GetScoreboardById), new { id = scoreboard.id }, scoreboard);
+                return CreatedAtAction(nameof(GetScoreboardById), new { id = scoreboard.Id }, scoreboard);
             }
             catch (Exception ex)
             {
@@ -143,13 +133,13 @@ namespace brainfreeze_new.Server.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteScoreboard(int id)
         {
-            var scoreboard = await _context.scoreboards.FindAsync(id);
+            var scoreboard = await _context.Scoreboards.FindAsync(id);
             if (scoreboard == null)
             {
                 return NotFound();
             }
 
-            _context.scoreboards.Remove(scoreboard);
+            _context.Scoreboards.Remove(scoreboard);
             await _context.SaveChangesAsync();
 
             return NoContent();
@@ -157,7 +147,7 @@ namespace brainfreeze_new.Server.Controllers
 
         private bool ScoreboardExists(int id)
         {
-            return _context.scoreboards.Any(e => e.id == id);
+            return _context.Scoreboards.Any(e => e.Id == id);
         }
 
         private void LogException(Exception ex)

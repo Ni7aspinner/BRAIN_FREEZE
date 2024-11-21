@@ -1,7 +1,6 @@
 ﻿namespace brainfreeze_new.Server.Exceptions
 {
-    public class ResourceNotFoundException : Exception
+    public class ResourceNotFoundException(string message) : Exception(message)
     {
-        public ResourceNotFoundException(string message) : base(message) { }
     }
 }

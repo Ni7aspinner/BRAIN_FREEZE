@@ -47,12 +47,13 @@ const CardFlip = () => {
       localStorage.setItem("CardFlip", user.cardflipScore);
 
     } catch (error) {
-      console.log("is this the error??");
+      console.log(error);
     }
   };
   
   const putDbHighScore = async () => {
     try {
+      console.log("Updating user score");
       const fetchResponse = await fetch(`https://localhost:7005/api/Scoreboards/get-by-id/${id}`);
       if (!fetchResponse.ok) {
           throw new Error(`Error fetching user: ${fetchResponse.statusText}`);
@@ -134,6 +135,7 @@ const CardFlip = () => {
 
   const submitInitScore = async (initScore: number) => {
     try {
+      console.log("Submitting initial score: ", initScore);
       const response = await fetch('https://localhost:5219/api/cardflip/submitInitScore', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -148,17 +150,19 @@ const CardFlip = () => {
 
   const submitScore = async (finalScore: number) => {
     try {
+      console.log("Submitting score: ", finalScore);
       const response = await fetch('https://localhost:5219/api/cardflip/submitScore', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ score: finalScore })
       });
-
       if (response.ok) {
         const data = await response.json();
         if (data.newHighScore) {
+          console.log("New Highscore!");
           setHighScore(finalScore);
-          localStorage.setItem("CardFlip", String(highScore));
+          putDbHighScore();
+          localStorage.setItem("CardFlip", String(finalScore));
         }
       }
     } catch (err) {

@@ -21,7 +21,7 @@ namespace brainfreeze_new.Server
         public int Level => CreatedList.Count;
         public List<X> ExpectedList { get; set; } = [];
 
-        public bool Equals()
+        public bool Equal()
         {
             if (_createdList.Count != ExpectedList.Count) return false;
 

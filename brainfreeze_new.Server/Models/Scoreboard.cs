@@ -6,18 +6,18 @@ namespace brainfreeze_new.Server.Models
     public class Scoreboard
     {
         [Key]
-        public int id { get; set; }
+        public int Id { get; set; }
 
-        public int place { get; set; }
+        public int Place { get; set; }
 
         [Column(TypeName ="nvarchar(100)")]
-        public String username { get; set; }
+        public String? Username { get; set; }
 
-        public int simonScore { get; set; }
+        public int SimonScore { get; set; }
 
-        public int cardflipScore { get; set; }
+        public int CardflipScore { get; set; }
 
-        public int nrgScore { get; set; }
+        public int NrgScore { get; set; }
 
     }
 }

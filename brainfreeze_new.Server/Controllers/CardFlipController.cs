@@ -18,9 +18,15 @@ namespace brainfreeze_new.Server.Controllers
         [HttpPost("submitInitScore")]
         public ActionResult SubmitInitScore([FromBody] ScoreData scoreData)
         {
-            int highScore = scoreData.Score;
+            HighScores.AddOrUpdate("globalHighScore",
+                scoreData.Score,
+                (key, currentHighScore) => scoreData.Score < currentHighScore ? scoreData.Score : currentHighScore);
+
+            HighScores.TryGetValue("globalHighScore", out int highScore);
+
             return Ok(new { highScore });
         }
+
 
         [HttpGet("shuffledImages")]
         public ActionResult GetShuffledImages()
@@ -45,6 +51,7 @@ namespace brainfreeze_new.Server.Controllers
 
             HighScores.TryGetValue("globalHighScore", out int newHighScore);
             bool isNewHighScore = newHighScore == scoreData.Score;
+
 
             _logger.LogInformation(isNewHighScore
                 ? $"New high score: {newHighScore}"

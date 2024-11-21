@@ -45,7 +45,7 @@ const Login = () => {
                     place: 0,
                     username,
                     simonScore: 0,
-                    cardflipScore: 0,
+                    cardflipScore: 999999,
                     nrgScore: 0,
                 }),
             });

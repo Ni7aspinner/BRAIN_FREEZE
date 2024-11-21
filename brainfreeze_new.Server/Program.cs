@@ -1,5 +1,4 @@
 using brainfreeze_new.Server.Models;
-using brainfreeze_new.Server.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,7 +16,6 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddControllers();
-builder.Services.AddSingleton<UserService>();
 
 // Registering the DbContext with the connection string
 builder.Services.AddDbContext<ScoreboardDBContext>(options =>

@@ -1,6 +1,8 @@
-import { useState, useEffect} from 'react';
+import { useState, useEffect,useRef} from 'react';
 import './NRG.css';
 import Grid from '../assets/Grid-1000-10-2-100.png';
+import backgroundMusic from '../assets/music_game_1.mp3'; // Make sure the path is correct
+
 interface Data {
   createdList: number[];
   level: number;
@@ -12,6 +14,9 @@ function NRG() {
   const [datas, setData] = useState<Data>();
   const [dataString1, setDataString1] = useState<string>(''); 
   const [dataString2, setDataString2] = useState<string>(''); 
+
+  const [isMuted, setIsMuted] = useState<boolean>(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
     const [flashingButtons, setFlashingButtons] = useState(Array(25).fill(false));
     const buttonPositions = [
@@ -46,12 +51,63 @@ function NRG() {
         { top: '79.3%', left: '80%' },
   ];
 
+  const fetchMuteStatus = async () => {
+    try {
+      const response = await fetch('https://localhost:5219/api/Mute');
+      if (!response.ok) {
+        throw new Error(`https error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      if (data.isMuted === true) {
+        setIsMuted(true); 
+      }
+      else{
+        setIsMuted(false);
+      }
+    } catch (err: any) {
+      console.error('Failed to fetch mute status:', err);
+    }
+  };
+
   useEffect(() => {
     populateData();
+    fetchMuteStatus();
+
+    const muteCheckInterval = setInterval(fetchMuteStatus, 1000); // Check every second
+
+    return () => {
+      clearInterval(muteCheckInterval);
+      if (audioRef.current) {
+        audioRef.current.pause();
+      }
+    };
   }, []);
   useEffect(() => {
     handleArray();
   }, [datas?.createdList]);
+
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = 0.3;
+      audioRef.current.loop = true;
+
+      if (isMuted) {
+        audioRef.current.pause();
+        audioRef.current.muted = true;
+      } else {
+        audioRef.current.muted = false;
+        const playPromise = audioRef.current.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(error => {
+            console.error("Autoplay prevented:", error);
+          });
+        }
+      }
+    }
+  }, [isMuted]);
+
   const populateData = async () => {
     try {
         console.log('Populating data');
@@ -123,6 +179,7 @@ function NRG() {
     return (
       <div className='center'>
         <><div className="block" >
+              <audio ref={audioRef} src={backgroundMusic} loop />
               <div className='image-container1'>
               <img src={Grid} className="imageGrid"/>
               {buttonPositions.map((pos, index) => (

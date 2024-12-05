@@ -1,25 +1,27 @@
-﻿using brainfreeze_new.Server.Controllers;
-using brainfreeze_new.Server;
+﻿using brainfreeze_new.Server;
+using brainfreeze_new.Server.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Moq;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Xunit;
-using System.Text.Json;
 
 namespace brainfreeze_new.Tests.Controllers
 {
     public class DataControllerTests
     {
-        private readonly TestLogger<DataController> _testLogger;
+        private readonly Mock<ILogger<DataController>> _mockLogger;
         private readonly DataController _controller;
 
         public DataControllerTests()
         {
-            // Use a custom test logger instead of a mocked ILogger
-            _testLogger = new TestLogger<DataController>();
-            _controller = new DataController(_testLogger);
+            // Create a mocked ILogger
+            _mockLogger = new Mock<ILogger<DataController>>();
+            _controller = new DataController(_mockLogger.Object);
         }
 
         [Fact]
@@ -46,7 +48,6 @@ namespace brainfreeze_new.Tests.Controllers
             var level = DifficultyLevel.Custom;
 
             // Act & Assert
-            // This will throw an exception because the `Challenge.txt` file does not exist
             await Assert.ThrowsAnyAsync<System.IO.IOException>(() => _controller.Get(level));
         }
 
@@ -114,23 +115,31 @@ namespace brainfreeze_new.Tests.Controllers
             Assert.Equal("Loser!", responseData.Message);
             Assert.NotNull(responseData.Data);
         }
-    }
 
-    // Custom test logger implementation
-    public class TestLogger<T> : ILogger<T>
-    {
-        public List<string> Logs { get; } = new List<string>();
-
-        IDisposable ILogger.BeginScope<TState>(TState state) => null!;
-
-        public bool IsEnabled(LogLevel logLevel) => true;
-
-        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+        [Fact]
+        public async Task Get_CustomLevel_Executes_CustomList()
         {
-            ArgumentNullException.ThrowIfNull(formatter);
+            // Arrange
+            var data = new Data();
+            string tempFileName = Path.GetTempFileName();
+            await File.WriteAllTextAsync(tempFileName, "1, 2, 3, 4, 5");
 
-            // Add the formatted log message to the Logs collection
-            Logs.Add(formatter(state, exception));
+            // Ensure "Challenge.txt" is accessible
+            File.Copy(tempFileName, "Challenge.txt", overwrite: true);
+
+            // Act
+            var result = await _controller.Get(DifficultyLevel.Custom);
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result.Result);
+            var responseData = Assert.IsType<DataController.ResponseData>(okResult.Value);
+
+            Assert.NotNull(responseData.Data);
+            Assert.Equal(new object[] { 1, 2, 3, 4, 5 }, responseData.Data.CreatedList);
+
+            // Clean up
+            File.Delete(tempFileName);
+            File.Delete("Challenge.txt");
         }
     }
 }

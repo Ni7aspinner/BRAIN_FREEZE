@@ -407,6 +407,7 @@ const putScore = async (newSimonScore: number) => {
             />
           ))}
         </div>
+        <div>{contents}</div>
       </div>
     </div>
   </>

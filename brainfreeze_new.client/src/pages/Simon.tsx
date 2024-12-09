@@ -1,7 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './Simon.css';
 import Keypad from '../assets/Keypad.png';
 import Follow from '../assets/Follow.png';
+
+import backgroundMusic from '../assets/music_game_2.mp3';
 
 interface Data {
     createdList: number[];
@@ -36,6 +38,29 @@ function Simon() {
   const [currentDifficulty, setCurrentDifficulty] = useState<Difficulty>(Difficulty.MainStart);
   const [id] = useState<string | null>(localStorage.getItem("ID"));
 
+  const [isMuted, setIsMuted] = useState<boolean>(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null); 
+
+
+  const fetchMuteStatus = async () => {
+    try {
+      const response = await fetch('https://localhost:5219/api/Mute');
+      if (!response.ok) {
+        throw new Error(`http error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      if (data.isMuted === true) {
+        setIsMuted(true); 
+      }
+      else{
+        setIsMuted(false);
+      }
+    } catch (err: any) {
+      console.error('Failed to fetch mute status:', err);
+    }
+  };
+
   const contents = datas === undefined
       ? <p><em>Loading... </em></p>
       : (
@@ -63,6 +88,17 @@ function Simon() {
   useEffect(() => {
     fetchSimonScore();
     populateData();
+
+    fetchMuteStatus();
+
+    const muteCheckInterval = setInterval(fetchMuteStatus, 1000); // Check every second
+
+    return () => {
+      clearInterval(muteCheckInterval);
+      if (audioRef.current) {
+        audioRef.current.pause();
+      }
+    };
   }, []);
 
   useEffect(() => {
@@ -73,6 +109,26 @@ function Simon() {
       }, 1000);
     }
   }, [datas, hasFlashed]);
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = 0.3;
+      audioRef.current.loop = true;
+
+      if (isMuted) {
+        audioRef.current.pause();
+        audioRef.current.muted = true;
+      } else {
+        audioRef.current.muted = false;
+        const playPromise = audioRef.current.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(error => {
+            console.error("Autoplay prevented:", error);
+          });
+        }
+      }
+    }
+  }, [isMuted]);
 
   useEffect(() => {
     // Whenever the game mode or difficulty changes, trigger new data population
@@ -288,7 +344,7 @@ const putScore = async (newSimonScore: number) => {
                     {gameMode === GameMode.Practice ? 'Switch to main mode' : 'Switch to practice mode'}
                 </button>
             </div>
-
+            <audio ref={audioRef} src={backgroundMusic} loop />
             <div className="controls" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                 {gameMode === GameMode.Practice && (
                     <select
@@ -351,7 +407,6 @@ const putScore = async (newSimonScore: number) => {
             />
           ))}
         </div>
-
         <div>{contents}</div>
       </div>
     </div>

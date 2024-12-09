@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import './CardFlip.css';
+import backgroundMusic from '../assets/music_game_3.mp3';
 
 const CardFlip = () => {
   const [images, setImages] = useState<string[]>([]);
@@ -10,14 +11,36 @@ const CardFlip = () => {
   const [moveCount, setMoveCount] = useState<number>(0);
   const [highScore, setHighScore] = useState<number | null>(null);
   const [isResetting, setIsResetting] = useState<boolean>(false);
-  const [isReady, setIsReady] = useState<boolean>(true); // Track when the game is ready to display cards
+  const [isReady, setIsReady] = useState<boolean>(true);
+  const [isMuted, setIsMuted] = useState<boolean>(false); // Mute/unmute state
   const [id] = useState<number | null>(Number(localStorage.getItem("ID")));
+
+  const audioRef = useRef<HTMLAudioElement | null>(null); // Reference for the audio element
+
+  const fetchMuteStatus = async () => {
+    try {
+      const response = await fetch('https://localhost:5219/api/Mute');
+      if (!response.ok) {
+        throw new Error(`https error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      if (data.isMuted === true) {
+        setIsMuted(true); 
+      }
+      else{
+        setIsMuted(false);
+      }
+    } catch (err: any) {
+      console.error('Failed to fetch mute status:', err);
+    }
+  };
 
   const fetchShuffledImages = async () => {
     try {
       const response = await fetch('https://localhost:5219/api/cardflip/shuffledImages');
       if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
+        throw new Error(`https error! Status: ${response.status}`);
       }
 
       const data = await response.json();
@@ -39,7 +62,7 @@ const CardFlip = () => {
       const response = await fetch(`https://localhost:7005/api/Scoreboards/get-by-id/${id}`);
       if (!response.ok) {
         console.log(response);
-        throw new Error(`HTTP error! Status: ${response.status}`);
+        throw new Error(`https error! Status: ${response.status}`);
       }
 
       const user = await response.json();
@@ -50,13 +73,13 @@ const CardFlip = () => {
       console.log(error);
     }
   };
-  
+
   const putDbHighScore = async () => {
     try {
       console.log("Updating user score");
       const fetchResponse = await fetch(`https://localhost:7005/api/Scoreboards/get-by-id/${id}`);
       if (!fetchResponse.ok) {
-          throw new Error(`Error fetching user: ${fetchResponse.statusText}`);
+        throw new Error(`Error fetching user: ${fetchResponse.statusText}`);
       }
 
       const user = await fetchResponse.json();
@@ -64,24 +87,23 @@ const CardFlip = () => {
         const updatedUser = { ...user, cardflipScore: highScore };
 
         const putResponse = await fetch(`https://localhost:7005/api/Scoreboards/${id}`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(updatedUser),
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updatedUser),
         });
 
         if (!putResponse.ok) {
-            throw new Error(`Error updating user: ${putResponse.statusText}`);
+          throw new Error(`Error updating user: ${putResponse.statusText}`);
         }
 
         console.log(`User with ID ${id} updated successfully.`);
-
-    } else {
+      } else {
         console.warn(`User with ID ${id} not found.`);
-    }
+      }
     } catch (error) {
-        console.error("Error updating user score:", error);
+      console.error("Error updating user score:", error);
     }
   };
 
@@ -89,9 +111,40 @@ const CardFlip = () => {
     setIdForScore();
     submitInitScore(Number(highScore));
     fetchShuffledImages();
-  }, []);
+    fetchMuteStatus();
 
-  
+    const muteCheckInterval = setInterval(fetchMuteStatus, 1000); // Check every second
+
+    return () => {
+      clearInterval(muteCheckInterval);
+      if (audioRef.current) {
+        audioRef.current.pause();
+      }
+    };
+  }, []); 
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = 0.3;
+      audioRef.current.loop = true;
+
+      // Apply mute/unmute immediately based on the state
+      if (isMuted) {
+        audioRef.current.pause();
+        audioRef.current.muted = true;
+      } else {
+        audioRef.current.muted = false;
+        const playPromise = audioRef.current.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(error => {
+            console.error("Autoplay prevented:", error);
+          });
+        }
+      }
+    }
+  }, [isMuted]); // Ensure this effect runs whenever `isMuted` changes
+
+
   const handleCardClick = (index: number) => {
     if (isResetting || selectedCards.length === 2 || matchedCards[index]) return;
 
@@ -103,12 +156,11 @@ const CardFlip = () => {
     setSelectedCards(newSelectedCards);
 
     if (newSelectedCards.length === 2) {
-      setMoveCount(prevCount => prevCount + 1);
+      setMoveCount((prevCount) => prevCount + 1);
       checkForMatch(newSelectedCards);
     }
   };
 
-  
   const checkForMatch = (selected: number[]) => {
     const [firstIndex, secondIndex] = selected;
     if (images[firstIndex] === images[secondIndex]) {
@@ -132,14 +184,13 @@ const CardFlip = () => {
     }
   };
 
-
   const submitInitScore = async (initScore: number) => {
     try {
       console.log("Submitting initial score: ", initScore);
       const response = await fetch('https://localhost:5219/api/cardflip/submitInitScore', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ score: initScore })
+        body: JSON.stringify({ score: initScore }),
       });
       console.log(response);
     } catch (err) {
@@ -147,14 +198,13 @@ const CardFlip = () => {
     }
   };
 
-
   const submitScore = async (finalScore: number) => {
     try {
       console.log("Submitting score: ", finalScore);
       const response = await fetch('https://localhost:5219/api/cardflip/submitScore', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ score: finalScore })
+        body: JSON.stringify({ score: finalScore }),
       });
       if (response.ok) {
         const data = await response.json();
@@ -171,12 +221,12 @@ const CardFlip = () => {
   };
 
   const resetGame = () => {
-    setIsReady(false);  
-    setIsResetting(true); 
+    setIsReady(false);
+    setIsResetting(true);
     setMoveCount(0);
     setSelectedCards([]);
-    setFlippedCards(new Array(images.length).fill(true));  
-    setTimeout(fetchShuffledImages, 500);  
+    setFlippedCards(new Array(images.length).fill(true));
+    setTimeout(fetchShuffledImages, 500);
   };
 
   return (
@@ -184,6 +234,8 @@ const CardFlip = () => {
       <h2>Card Flip Game</h2>
 
       {error && <div style={{ color: 'red' }}>{error}</div>}
+
+      <audio ref={audioRef} src={backgroundMusic} loop />
 
       <div className="score-board">
         <p>Moves: {moveCount}</p>

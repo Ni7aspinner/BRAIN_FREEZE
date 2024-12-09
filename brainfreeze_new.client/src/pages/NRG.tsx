@@ -10,6 +10,8 @@ interface Data {
   difficulty: 'VeryEasy' | 'Easy' | 'Medium' | 'Hard' | 'Nightmare' | 'Impossible';
 }
 
+const defaultLevel = '4';
+
 function NRG() {
   const [datas, setData] = useState<Data>();
   const [dataString1, setDataString1] = useState<string>(''); 
@@ -176,6 +178,15 @@ function NRG() {
       return newState;
     });
   };
+
+  const restartGame = () => {
+    setData(undefined);
+    setDataString1('');
+    setDataString2('');
+    setFlashingButtons(Array(25).fill(false));
+    populateData(); 
+  };
+
     return (
       <div className='center'>
         <><div className="block" >
@@ -211,6 +222,14 @@ function NRG() {
           <div>{dataString1}</div>
           <div>{dataString2}</div>
           <button onClick={handleArray}></button>
+          <div className="level-text">Level: {datas?.level ?? defaultLevel}</div>
+          <div 
+              className="restart-button" 
+              onClick={restartGame} 
+              role="button" 
+              aria-label="Restart Game"
+          />
+
           <div >(index starts from zero)</div>
           </div>
           </div>

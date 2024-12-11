@@ -13,6 +13,7 @@ interface Data {
 const defaultLevel = '4';
 
 function NRG() {
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const [datas, setData] = useState<Data>();
   const [dataString1, setDataString1] = useState<string>(''); 
   const [dataString2, setDataString2] = useState<string>(''); 
@@ -55,7 +56,7 @@ function NRG() {
 
   const fetchMuteStatus = async () => {
     try {
-      const response = await fetch('https://localhost:5219/api/Mute');
+        const response = await fetch(`${backendUrl}Mute`);
       if (!response.ok) {
         throw new Error(`https error! Status: ${response.status}`);
       }
@@ -113,7 +114,7 @@ function NRG() {
   const populateData = async () => {
     try {
         console.log('Populating data');
-        const response = await fetch(`https://localhost:7005/api/NRG`); 
+        const response = await fetch(`${backendUrl}NRG`); 
         if (!response.ok) {                                               
             throw new Error(`HTTP error! Status: ${response.status}`);
         }
@@ -132,7 +133,7 @@ function NRG() {
   {
     try {
       console.log('Posting data:', JSON.stringify(data));
-      const response = await fetch('https://localhost:5219/api/NRG', {
+        const response = await fetch(`${backendUrl}NRG`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

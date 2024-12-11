@@ -5,8 +5,10 @@ import { useState, useEffect } from 'react';
 function Header() {
     const [isMuted, setIsMuted] = useState(false);
 
+    const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
     useEffect(() => {
-        fetch('https://localhost:5219/api/Mute') 
+        fetch(`${backendUrl}Mute`) 
             .then(response => response.json())
             .then(data => {
                 setIsMuted(data.isMuted);  
@@ -19,7 +21,7 @@ function Header() {
     const handleMuteToggle = () => {
         const newMuteState = !isMuted;
 
-        fetch('https://localhost:5219/api/Mute', {
+        fetch(`${backendUrl}Mute`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

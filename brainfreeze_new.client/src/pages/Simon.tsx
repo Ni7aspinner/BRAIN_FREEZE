@@ -37,14 +37,14 @@ function Simon() {
   const [gameMode, setGameMode] = useState<GameMode>(GameMode.Main); 
   const [currentDifficulty, setCurrentDifficulty] = useState<Difficulty>(Difficulty.MainStart);
   const [id] = useState<string | null>(localStorage.getItem("ID"));
-
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const [isMuted, setIsMuted] = useState<boolean>(false);
   const audioRef = useRef<HTMLAudioElement | null>(null); 
 
 
   const fetchMuteStatus = async () => {
     try {
-      const response = await fetch('https://localhost:5219/api/Mute');
+        const response = await fetch(`${backendUrl}Mute`);
       if (!response.ok) {
         throw new Error(`http error! Status: ${response.status}`);
       }
@@ -65,8 +65,6 @@ function Simon() {
       ? <p><em>Loading... </em></p>
       : (
           <div>
-            <div>{dataString1}</div>
-            <div>{dataString2}</div>
             <h2>{gameMode}</h2>
             <p>Difficulty selected: {Difficulty[currentDifficulty]}</p>
             {score !== null && <h2>Your Score: {score}</h2>} {/* Display score */}
@@ -143,7 +141,7 @@ function Simon() {
 
   const fetchSimonScore = async () => {
     try {
-        const response = await fetch(`https://localhost:7005/api/Scoreboards/get-by-id/${id}`);
+        const response = await fetch(`${backendUrl}Scoreboards/get-by-id/${id}`);
         if (!response.ok) {
             throw new Error(`Error fetching scores: ${response.statusText}`);
         }
@@ -164,7 +162,7 @@ function Simon() {
 const putScore = async (newSimonScore: number) => {
   try {
       console.log(id);
-      const fetchResponse = await fetch(`https://localhost:7005/api/Scoreboards/get-by-id/${id}`);
+      const fetchResponse = await fetch(`${backendUrl}Scoreboards/get-by-id/${id}`);
       if (!fetchResponse.ok) {
           throw new Error(`Error fetching user: ${fetchResponse.statusText}`);
       }
@@ -174,7 +172,7 @@ const putScore = async (newSimonScore: number) => {
       if (user) {
           const updatedUser = { ...user, simonScore: newSimonScore };
 
-          const putResponse = await fetch(`https://localhost:7005/api/Scoreboards/${id}`, {
+          const putResponse = await fetch(`${backendUrl}Scoreboards/${id}`, {
               method: "PUT",
               headers: {
                   "Content-Type": "application/json",
@@ -204,7 +202,7 @@ const putScore = async (newSimonScore: number) => {
         console.log("Expected Pattern:", datas.expectedList);
         console.log("User Input:", userInput);
     try {
-      const response = await fetch('https://localhost:5219/api/score/evaluate', {
+        const response = await fetch(`${backendUrl}score/evaluate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -237,7 +235,7 @@ const putScore = async (newSimonScore: number) => {
   const populateData = async () => {
     try {
         console.log('Populating data');
-        const response = await fetch(`https://localhost:7005/api/Data?level=${currentDifficulty}`, {
+        const response = await fetch(`${backendUrl}Data?level=${currentDifficulty}`, {
             method: 'GET'
         });
         if (!response.ok) {       
@@ -292,7 +290,7 @@ const putScore = async (newSimonScore: number) => {
             difficulty: currentDifficulty
         };
       
-      const response = await fetch('https://localhost:5219/api/Data', {
+        const response = await fetch(`${backendUrl}Data`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

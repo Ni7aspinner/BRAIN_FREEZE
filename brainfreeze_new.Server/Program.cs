@@ -4,16 +4,23 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Accessing the connection string from appsettings.json
+var frontendUrlPub = builder.Configuration["Frontend:UrlPub"];
+var frontendUrlPriv = builder.Configuration["Frontend:UrlPriv"];
 var connectionString = builder.Configuration.GetConnectionString("DevConnection");
 
-// Add services to the container.
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowFrontend",
-        builder => builder.WithOrigins("https://localhost:5173")
-                          .AllowAnyMethod()
-                          .AllowAnyHeader());
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins(frontendUrlPub, frontendUrlPriv)
+              .AllowAnyMethod()
+              .AllowAnyHeader()
+              .AllowCredentials();
+    });
 });
+
+builder.Services.AddControllers();
+
 
 builder.Services.AddControllers();
 
@@ -26,6 +33,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+app.Urls.Add("https://0.0.0.0:7005");
+
+
 
 app.UseDefaultFiles();
 app.UseStaticFiles();

@@ -64,5 +64,29 @@ namespace brainfreeze_new.Server.Controllers.Tests
             var returnedScoreboard = okResult.Value;
             Assert.Equal(testUsername, returnedScoreboard?.Username);
         }
+        [Fact]
+        public async Task GetScoreboardById_ValidId_ReturnsScoreboard()
+        {
+            var services = new ServiceCollection();
+            var serviceProvider = SetupInMemoryDbContext(out services);
+            var context = serviceProvider.GetService<ScoreboardDBContext>();
+
+            int id = 1;
+            var testScoreboard = new Scoreboard { Id = id, Username = "User1", CardflipScore = 250 };
+            context.Scoreboards.Add(testScoreboard);
+            await context.SaveChangesAsync();
+
+            var controller = new ScoreboardsController(context);
+            var result = await controller.GetScoreboardById(id);
+
+            var okResult = Assert.IsType<ActionResult<Scoreboard>>(result);
+            var returnedScoreboard = okResult.Value;
+
+            Assert.NotNull(returnedScoreboard);
+            Assert.Equal(testScoreboard.Username, returnedScoreboard.Username);
+            Assert.Equal(testScoreboard.CardflipScore, returnedScoreboard.CardflipScore);
+        }
+
+        
     }
 }

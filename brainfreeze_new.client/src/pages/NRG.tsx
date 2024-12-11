@@ -17,7 +17,8 @@ function NRG() {
   const [datas, setData] = useState<Data>();
   const [dataString1, setDataString1] = useState<string>(''); 
   const [dataString2, setDataString2] = useState<string>(''); 
-
+  const [id] = useState<number | null>(Number(localStorage.getItem("ID")));
+  const [highScore, setHighScore] = useState<number | null>(null);
   const [isMuted, setIsMuted] = useState<boolean>(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -54,6 +55,56 @@ function NRG() {
         { top: '79.3%', left: '80%' },
   ];
 
+    const setIdForScore = async () => {
+        try {
+            const response = await fetch(`${backendUrl}Scoreboards/get-by-id/${id}`);
+            if (!response.ok) {
+                console.log(response);
+                throw new Error(`https error! Status: ${response.status}`);
+            }
+
+            const user = await response.json();
+            setHighScore(user.nrgScore);
+            localStorage.setItem("CardFlip", user.nrgScore);
+
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const putDbHighScore = async (finalScore: number) => {
+        try {
+            console.log("Updating user score");
+            const fetchResponse = await fetch(`${backendUrl}Scoreboards/get-by-id/${id}`);
+            if (!fetchResponse.ok) {
+                throw new Error(`Error fetching user: ${fetchResponse.statusText}`);
+            }
+
+            const user = await fetchResponse.json();
+            if (user) {
+                const updatedUser = { ...user, nrgScore: finalScore };
+
+                const putResponse = await fetch(`${backendUrl}Scoreboards/${id}`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(updatedUser),
+                });
+
+                if (!putResponse.ok) {
+                    throw new Error(`Error updating user: ${putResponse.statusText}`);
+                }
+
+                console.log(`User with ID ${id} updated successfully.`);
+            } else {
+                console.warn(`User with ID ${id} not found.`);
+            }
+        } catch (error) {
+            console.error("Error updating user score:", error);
+        }
+    };
+
   const fetchMuteStatus = async () => {
     try {
         const response = await fetch(`${backendUrl}Mute`);
@@ -74,6 +125,7 @@ function NRG() {
   };
 
   useEffect(() => {
+    setIdForScore();
     populateData();
     fetchMuteStatus();
 
@@ -145,6 +197,9 @@ function NRG() {
       const results = await response.json();
       const result = results.data;
       console.log(results.message);
+      if (results.message == "Congrats player!" && datas?.level > highScore) {
+          putDbHighScore(datas?.level);
+      }
       console.log('API response: ', result);
       setData(result);
       const dataString1 = result.createdList.join(', '); 

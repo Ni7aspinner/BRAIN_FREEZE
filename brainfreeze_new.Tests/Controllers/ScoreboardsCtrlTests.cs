@@ -30,7 +30,7 @@ namespace brainfreeze_new.Server.Controllers.Tests
             var context = serviceProvider.GetService<ScoreboardDBContext>();
 
             
-            var scoreboard = new Scoreboard { Id = 1, Username = "User1", CardflipScore = 100, Place = 1, SimonScore = 200, NrgScore = 300 };
+            var scoreboard = new Scoreboard { Id = 3, Username = "User1", CardflipScore = 100, Place = 1, SimonScore = 200, NrgScore = 300 };
             context.Scoreboards.Add(scoreboard);
             await context.SaveChangesAsync();
 

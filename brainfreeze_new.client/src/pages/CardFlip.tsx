@@ -17,9 +17,11 @@ const CardFlip = () => {
 
   const audioRef = useRef<HTMLAudioElement | null>(null); // Reference for the audio element
 
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
   const fetchMuteStatus = async () => {
     try {
-      const response = await fetch('https://localhost:5219/api/Mute');
+      const response = await fetch(`${backendUrl}Mute`);
       if (!response.ok) {
         throw new Error(`https error! Status: ${response.status}`);
       }
@@ -38,7 +40,7 @@ const CardFlip = () => {
 
   const fetchShuffledImages = async () => {
     try {
-      const response = await fetch('https://localhost:5219/api/cardflip/shuffledImages');
+        const response = await fetch(`${backendUrl}cardflip/shuffledImages`);
       if (!response.ok) {
         throw new Error(`https error! Status: ${response.status}`);
       }
@@ -59,7 +61,7 @@ const CardFlip = () => {
 
   const setIdForScore = async () => {
     try {
-      const response = await fetch(`https://localhost:7005/api/Scoreboards/get-by-id/${id}`);
+        const response = await fetch(`${backendUrl}Scoreboards/get-by-id/${id}`);
       if (!response.ok) {
         console.log(response);
         throw new Error(`https error! Status: ${response.status}`);
@@ -74,19 +76,19 @@ const CardFlip = () => {
     }
   };
 
-  const putDbHighScore = async () => {
+    const putDbHighScore = async (finalScore: number) => {
     try {
       console.log("Updating user score");
-      const fetchResponse = await fetch(`https://localhost:7005/api/Scoreboards/get-by-id/${id}`);
+        const fetchResponse = await fetch(`${backendUrl}Scoreboards/get-by-id/${id}`);
       if (!fetchResponse.ok) {
         throw new Error(`Error fetching user: ${fetchResponse.statusText}`);
       }
 
       const user = await fetchResponse.json();
       if (user) {
-        const updatedUser = { ...user, cardflipScore: highScore };
+          const updatedUser = { ...user, cardflipScore: finalScore };
 
-        const putResponse = await fetch(`https://localhost:7005/api/Scoreboards/${id}`, {
+          const putResponse = await fetch(`${backendUrl}Scoreboards/${id}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -184,41 +186,45 @@ const CardFlip = () => {
     }
   };
 
-  const submitInitScore = async (initScore: number) => {
-    try {
-      console.log("Submitting initial score: ", initScore);
-      const response = await fetch('https://localhost:5219/api/cardflip/submitInitScore', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ score: initScore }),
-      });
-      console.log(response);
-    } catch (err) {
-      setError('Failed to submit score');
-    }
-  };
-
-  const submitScore = async (finalScore: number) => {
-    try {
-      console.log("Submitting score: ", finalScore);
-      const response = await fetch('https://localhost:5219/api/cardflip/submitScore', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ score: finalScore }),
-      });
-      if (response.ok) {
-        const data = await response.json();
-        if (data.newHighScore) {
-          console.log("New Highscore!");
-          setHighScore(finalScore);
-          putDbHighScore();
-          localStorage.setItem("CardFlip", String(finalScore));
+    const submitInitScore = async (initScore: number) => {
+        try {
+            if (initScore && initScore !== highScore) {
+                console.log("Submitting initial score: ", initScore);
+                const response = await fetch(`${backendUrl}cardflip/submitInitScore`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ score: initScore }),
+                });
+                console.log(response);
+            }
+        } catch (err) {
+            setError('Failed to submit score');
         }
-      }
-    } catch (err) {
-      setError('Failed to submit score');
-    }
-  };
+    };
+
+    const submitScore = async (finalScore: number) => {
+        try {
+            console.log("Submitting score: ", finalScore);
+            const response = await fetch(`${backendUrl}cardflip/submitScore`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ score: finalScore }),
+            });
+            if (response.ok) {
+                const data = await response.json();
+                if (data.newHighScore) {
+                    console.log("New Highscore!");
+                    setHighScore(finalScore);
+                    putDbHighScore(finalScore);
+                    localStorage.setItem("CardFlip", String(finalScore));
+                }
+            }
+        } catch (err) {
+            setError('Failed to submit score');
+        }
+    };
+
+
 
   const resetGame = () => {
     setIsReady(false);

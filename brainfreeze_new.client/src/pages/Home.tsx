@@ -3,6 +3,9 @@ import './Home.css';
 import { useEffect, useState } from 'react';
 
 export default function Home() {
+
+    const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
     const navigate = useNavigate();
     const [id, setID] = useState<string | null>(localStorage.getItem("ID"));
     const [username, setUsername] = useState<string | null>(null);
@@ -17,7 +20,7 @@ export default function Home() {
         try {
             const tempid = localStorage.getItem("ID");
             setID(tempid);
-            const response = await fetch(`https://localhost:7005/api/Scoreboards/get-by-id/${id}`);
+            const response = await fetch(`${backendUrl}Scoreboards/get-by-id/${id}`);
             if (!response.ok) {
                 throw new Error(`Error fetching scores: ${response.statusText}`);
             }

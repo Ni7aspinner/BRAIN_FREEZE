@@ -95,6 +95,22 @@ namespace brainfreeze_new.Server.Controllers.Tests
             var isNewHighScore = (bool)newHighScoreProperty.GetValue(value);
             Assert.False(isNewHighScore);
         }
+        [Fact]
+        public void SubmitInitScore_ReturnsOkResult_WithUpdatedHighScore()
+        {
+            var scoreData = new ScoreData { Score = 100 };
+
+            var result = _controller.SubmitInitScore(scoreData) as OkObjectResult;
+
+            Assert.NotNull(result);
+
+            var value = result.Value;
+            var highScoreProperty = value.GetType().GetProperty("highScore");
+            Assert.NotNull(highScoreProperty);
+
+            var highScore = (int)highScoreProperty.GetValue(value);
+            Assert.Equal(100, highScore);
+        }
     }
 
 }

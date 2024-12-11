@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
 import './Navigationbar.css';
 import { useState, useEffect } from 'react';
+import unmutedIcon from '../assets/unmuted.png';
+import mutedIcon from '../assets/muted.png';
 
 function Header() {
     const [isMuted, setIsMuted] = useState(false);
@@ -49,7 +51,10 @@ function Header() {
             <nav>
                 <Link to="/home" className="home-arrow"></Link>
                 <button className="mute-button" onClick={handleMuteToggle}>
-                    {isMuted ? 'Unmute' : 'Mute'}
+                    <img 
+                        src={isMuted ? unmutedIcon : mutedIcon} 
+                        alt={isMuted ? 'Mute' : 'Unmute'} 
+                    />
                 </button>
             </nav>
         </header>

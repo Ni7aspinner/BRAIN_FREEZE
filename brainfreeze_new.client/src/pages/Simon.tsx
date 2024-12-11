@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect, useRef } from 'react';
 import './Simon.css';
 import Keypad from '../assets/Keypad.png';
@@ -29,8 +30,8 @@ enum GameMode {
 
 function Simon() {
   const [datas, setData] = useState<Data>();
-  const [dataString1, setDataString1] = useState<string>('');
-  const [dataString2, setDataString2] = useState<string>('');
+  //const [dataString1, setDataString1] = useState<string>('');
+  //const [dataString2, setDataString2] = useState<string>('');
   const [flashingButtons, setFlashingButtons] = useState(Array(9).fill(false));
   const [score, setScore] = useState<number>(0);
   const [hasFlashed, setHasFlashed] = useState<boolean>(false);
@@ -246,8 +247,8 @@ const putScore = async (newSimonScore: number) => {
         console.log(results.message);
         setData(data);
 
-        const dataString1 = data.createdList.join(', ');
-        setDataString1(dataString1);
+        //const dataString1 = data.createdList.join(', ');
+        //setDataString1(dataString1);
     } catch (error) {
       console.error('Failed to fetch data:', error);
     }
@@ -301,10 +302,10 @@ const putScore = async (newSimonScore: number) => {
       if (response.ok) {
         const results = await response.json();
         setData(results.data);
-        const dataString1 = results.data.createdList.join(', ');
-        setDataString1(dataString1);
-        const dataString2 = results.data.expectedList.join(', ');
-        setDataString2(dataString2);
+        //const dataString1 = results.data.createdList.join(', ');
+        //setDataString1(dataString1);
+        //const dataString2 = results.data.expectedList.join(', ');
+        //setDataString2(dataString2);
       } else {
         console.error('Error in API request:', response.statusText);
       }
@@ -389,8 +390,8 @@ const putScore = async (newSimonScore: number) => {
                     expectedList: Array.isArray(datas.expectedList) ? [...datas.expectedList, index + 1] : [index + 1],
                   };
                   setData(updatedData);
-                  const dataString2 = updatedData.expectedList.join(', ');
-                  setDataString2(dataString2);
+                  //const dataString2 = updatedData.expectedList.join(', ');
+                  //setDataString2(dataString2);
                   postData(updatedData);
                   if (updatedUserInput.length === datas.createdList.length) {
                     if (JSON.stringify(updatedUserInput) === JSON.stringify(datas.createdList)) {

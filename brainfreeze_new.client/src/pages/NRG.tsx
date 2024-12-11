@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect,useRef} from 'react';
 import './NRG.css';
 import Grid from '../assets/Grid-1000-10-2-100.png';
@@ -18,7 +19,7 @@ function NRG() {
   const [dataString1, setDataString1] = useState<string>(''); 
   const [dataString2, setDataString2] = useState<string>(''); 
   const [id] = useState<number | null>(Number(localStorage.getItem("ID")));
-  const [highScore, setHighScore] = useState<number | null>(null);
+  const [highScore, setHighScore] = useState<number | null>(4);
   const [isMuted, setIsMuted] = useState<boolean>(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -197,8 +198,10 @@ function NRG() {
       const results = await response.json();
       const result = results.data;
       console.log(results.message);
-      if (results.message == "Congrats player!" && datas?.level > highScore) {
-          putDbHighScore(datas?.level);
+      if (datas?.level != null && highScore != null) {
+          if (results.message == "Congrats player!" && datas?.level > highScore) {
+              putDbHighScore(datas?.level);
+          }
       }
       console.log('API response: ', result);
       setData(result);

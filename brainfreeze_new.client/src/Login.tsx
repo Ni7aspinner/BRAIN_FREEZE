@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
+
+
 const Login = () => {
+    const backendUrl = import.meta.env.VITE_BACKEND_URL;
     const [username, setUsername] = useState("");
     const navigate = useNavigate();
 
@@ -17,7 +20,7 @@ const Login = () => {
 
     const fetchNewSessionId = async () => {
         try {
-            const response = await fetch("https://localhost:7005/api/session/new");
+            const response = await fetch(`${backendUrl}session/new`);
             if (!response.ok) {
                 throw new Error(`Error fetching session ID: ${response.statusText}`);
             }
@@ -36,7 +39,7 @@ const Login = () => {
 
     const initializeDatabaseEntry = async (): Promise<number | null> => {
         try {
-            const response = await fetch(`https://localhost:7005/api/Scoreboards`, {
+            const response = await fetch(`${backendUrl}Scoreboards`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -66,7 +69,7 @@ const Login = () => {
     
     const fetchUserScores = async () => {
         try {
-            const response = await fetch(`https://localhost:7005/api/Scoreboards/get-by-username/${username}`);
+            const response = await fetch(`${backendUrl}Scoreboards/get-by-username/${username}`);
             
             if (!response.ok) {
                 if (response.status === 404) {

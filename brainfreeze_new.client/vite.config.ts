@@ -6,6 +6,11 @@ import fs from 'fs';
 import path from 'path';
 import child_process from 'child_process';
 import { env } from 'process';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+console.log('Backend URL:', process.env.VITE_BACKEND_URL);
 
 const baseFolder =
     env.APPDATA !== undefined && env.APPDATA !== ''
@@ -52,6 +57,7 @@ export default defineConfig({
         https: {
             key: fs.readFileSync(keyFilePath),
             cert: fs.readFileSync(certFilePath),
-        }
+        },
+        host: '0.0.0.0',
     }
 })

@@ -1,7 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './Simon.css';
 import Keypad from '../assets/Keypad.png';
 import Follow from '../assets/Follow.png';
+
+import backgroundMusic from '../assets/music_game_2.mp3';
 
 interface Data {
     createdList: number[];
@@ -35,13 +37,34 @@ function Simon() {
   const [gameMode, setGameMode] = useState<GameMode>(GameMode.Main); 
   const [currentDifficulty, setCurrentDifficulty] = useState<Difficulty>(Difficulty.MainStart);
   const [id] = useState<string | null>(localStorage.getItem("ID"));
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
+  const [isMuted, setIsMuted] = useState<boolean>(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null); 
+
+
+  const fetchMuteStatus = async () => {
+    try {
+        const response = await fetch(`${backendUrl}Mute`);
+      if (!response.ok) {
+        throw new Error(`http error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      if (data.isMuted === true) {
+        setIsMuted(true); 
+      }
+      else{
+        setIsMuted(false);
+      }
+    } catch (err: any) {
+      console.error('Failed to fetch mute status:', err);
+    }
+  };
 
   const contents = datas === undefined
       ? <p><em>Loading... </em></p>
       : (
           <div>
-            <div>{dataString1}</div>
-            <div>{dataString2}</div>
             <h2>{gameMode}</h2>
             <p>Difficulty selected: {Difficulty[currentDifficulty]}</p>
             {score !== null && <h2>Your Score: {score}</h2>} {/* Display score */}
@@ -63,6 +86,17 @@ function Simon() {
   useEffect(() => {
     fetchSimonScore();
     populateData();
+
+    fetchMuteStatus();
+
+    const muteCheckInterval = setInterval(fetchMuteStatus, 1000); // Check every second
+
+    return () => {
+      clearInterval(muteCheckInterval);
+      if (audioRef.current) {
+        audioRef.current.pause();
+      }
+    };
   }, []);
 
   useEffect(() => {
@@ -73,6 +107,26 @@ function Simon() {
       }, 1000);
     }
   }, [datas, hasFlashed]);
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = 0.3;
+      audioRef.current.loop = true;
+
+      if (isMuted) {
+        audioRef.current.pause();
+        audioRef.current.muted = true;
+      } else {
+        audioRef.current.muted = false;
+        const playPromise = audioRef.current.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(error => {
+            console.error("Autoplay prevented:", error);
+          });
+        }
+      }
+    }
+  }, [isMuted]);
 
   useEffect(() => {
     // Whenever the game mode or difficulty changes, trigger new data population
@@ -87,7 +141,7 @@ function Simon() {
 
   const fetchSimonScore = async () => {
     try {
-        const response = await fetch(`https://localhost:7005/api/Scoreboards/get-by-id/${id}`);
+        const response = await fetch(`${backendUrl}Scoreboards/get-by-id/${id}`);
         if (!response.ok) {
             throw new Error(`Error fetching scores: ${response.statusText}`);
         }
@@ -108,7 +162,7 @@ function Simon() {
 const putScore = async (newSimonScore: number) => {
   try {
       console.log(id);
-      const fetchResponse = await fetch(`https://localhost:7005/api/Scoreboards/get-by-id/${id}`);
+      const fetchResponse = await fetch(`${backendUrl}Scoreboards/get-by-id/${id}`);
       if (!fetchResponse.ok) {
           throw new Error(`Error fetching user: ${fetchResponse.statusText}`);
       }
@@ -118,7 +172,7 @@ const putScore = async (newSimonScore: number) => {
       if (user) {
           const updatedUser = { ...user, simonScore: newSimonScore };
 
-          const putResponse = await fetch(`https://localhost:7005/api/Scoreboards/${id}`, {
+          const putResponse = await fetch(`${backendUrl}Scoreboards/${id}`, {
               method: "PUT",
               headers: {
                   "Content-Type": "application/json",
@@ -148,7 +202,7 @@ const putScore = async (newSimonScore: number) => {
         console.log("Expected Pattern:", datas.expectedList);
         console.log("User Input:", userInput);
     try {
-      const response = await fetch('https://localhost:5219/api/score/evaluate', {
+        const response = await fetch(`${backendUrl}score/evaluate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -181,7 +235,7 @@ const putScore = async (newSimonScore: number) => {
   const populateData = async () => {
     try {
         console.log('Populating data');
-        const response = await fetch(`https://localhost:7005/api/Data?level=${currentDifficulty}`, {
+        const response = await fetch(`${backendUrl}Data?level=${currentDifficulty}`, {
             method: 'GET'
         });
         if (!response.ok) {       
@@ -236,7 +290,7 @@ const putScore = async (newSimonScore: number) => {
             difficulty: currentDifficulty
         };
       
-      const response = await fetch('https://localhost:5219/api/Data', {
+        const response = await fetch(`${backendUrl}Data`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -288,7 +342,7 @@ const putScore = async (newSimonScore: number) => {
                     {gameMode === GameMode.Practice ? 'Switch to main mode' : 'Switch to practice mode'}
                 </button>
             </div>
-
+            <audio ref={audioRef} src={backgroundMusic} loop />
             <div className="controls" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                 {gameMode === GameMode.Practice && (
                     <select
@@ -351,7 +405,6 @@ const putScore = async (newSimonScore: number) => {
             />
           ))}
         </div>
-
         <div>{contents}</div>
       </div>
     </div>

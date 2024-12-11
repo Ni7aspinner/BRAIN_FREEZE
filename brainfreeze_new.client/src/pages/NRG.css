@@ -37,3 +37,47 @@
     height: 100vh;
     text-align: center;
 }
+
+.restart-button {
+    width: 60px;
+    height: 60px;
+    background-image: url('../assets/restart-icon.png'); 
+    filter: invert(34%) sepia(2%) saturate(983%) hue-rotate(173deg) brightness(104%) contrast(86%); /* Change the colour of the button image */
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    border: none;
+    border-radius: 50%; 
+    cursor: pointer;
+    position: absolute; 
+    top: -80px; /* Position above the grid */
+    left: 50%; 
+    transform: translateX(-50%); 
+    transition: transform 0.2s ease, box-shadow 0.2s ease; 
+}
+
+.restart-button:hover {
+    transform: translateX(-50%) scale(1.1); 
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); 
+}
+
+.restart-button:active {
+    transform: translateX(-50%) scale(0.95); 
+}
+
+.level-text {
+    position: absolute; 
+    top: -120px; 
+    left: 50%; 
+    transform: translateX(-50%); 
+    font-size: 18px; 
+    font-weight: bold; 
+    color: #121212; 
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3); 
+    filter: invert(34%) sepia(2%) saturate(983%) hue-rotate(173deg) brightness(104%) contrast(86%); /* The same colour as that of button */
+    background-color: #ffffff; 
+    padding: 5px 10px; 
+    border-radius: 8px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+    text-align: center; 
+  }

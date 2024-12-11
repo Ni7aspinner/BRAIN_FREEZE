@@ -22,39 +22,39 @@ namespace brainfreeze_new.Server.Controllers.Tests
         [Fact]
         public void GetShuffledImages_Returns_ShuffledImageList()
         {
-            
+
             var result = _controller.GetShuffledImages() as OkObjectResult;
-            
-            
+
+
             Assert.NotNull(result);
-            
-            
+
+
             var value = result.Value;
             var shuffledImagesProperty = value.GetType().GetProperty("shuffledImages");
             Assert.NotNull(shuffledImagesProperty);
-            
+
             var shuffledImages = shuffledImagesProperty.GetValue(value) as List<string>;
-            
+
             Assert.NotNull(shuffledImages);
-            Assert.Equal(18, shuffledImages.Count); 
+            Assert.Equal(18, shuffledImages.Count);
         }
 
         [Fact]
         public void GetHighScore_Returns_DefaultHighScore()
         {
-            
+
             var result = _controller.GetHighScore() as OkObjectResult;
-            
-           
+
+
             Assert.NotNull(result);
-            
-            
+
+
             var value = result.Value;
             var highScoreProperty = value.GetType().GetProperty("highScore");
             Assert.NotNull(highScoreProperty);
-            
+
             var highScore = (int)highScoreProperty.GetValue(value);
-            Assert.Equal(0, highScore); 
+            Assert.Equal(0, highScore);
         }
 
         [Fact]
@@ -63,14 +63,14 @@ namespace brainfreeze_new.Server.Controllers.Tests
             var scoreData = new ScoreData { Score = 10 };
 
             var result = _controller.SubmitScore(scoreData) as OkObjectResult;
-          
+
             Assert.NotNull(result);
-            
-            
+
+
             var value = result.Value;
             var newHighScoreProperty = value.GetType().GetProperty("newHighScore");
             Assert.NotNull(newHighScoreProperty);
-            
+
             var isNewHighScore = (bool)newHighScoreProperty.GetValue(value);
             Assert.True(isNewHighScore);
         }
@@ -78,23 +78,23 @@ namespace brainfreeze_new.Server.Controllers.Tests
         [Fact]
         public void SubmitScore_Rejects_HigherScores()
         {
-            
-            _controller.SubmitScore(new ScoreData { Score = 10 }); 
+
+            _controller.SubmitScore(new ScoreData { Score = 10 });
             var scoreData = new ScoreData { Score = 15 };
 
-           
+
             var result = _controller.SubmitScore(scoreData) as OkObjectResult;
-            
-            
+
+
             Assert.NotNull(result);
-            
+
             var value = result.Value;
             var newHighScoreProperty = value.GetType().GetProperty("newHighScore");
             Assert.NotNull(newHighScoreProperty);
-            
+
             var isNewHighScore = (bool)newHighScoreProperty.GetValue(value);
-            Assert.False(isNewHighScore); 
+            Assert.False(isNewHighScore);
         }
     }
-    
+
 }

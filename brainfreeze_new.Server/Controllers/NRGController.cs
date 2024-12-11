@@ -61,13 +61,6 @@ namespace brainfreeze_new.Server.Controllers
                 ModifyList(newSequence, max: 25);
             }
         }
-
-        //Commenting this out as it is not used
-
-        //static private void checkValue(GenericClass<int> data, int value)
-        //{
-        //    if (data.FirstElementEqualTo(value)) Console.WriteLine("yay");
-        //}
         
     }
 

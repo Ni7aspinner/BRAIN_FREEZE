@@ -104,7 +104,7 @@ namespace brainfreeze_new.Server.Controllers
                 throw;
             }
         }
-        private static bool ShortCheck(Data sequence)
+        static public bool ShortCheck(Data sequence)
         {
             // Ensure both lists are non-null
             if (sequence.CreatedList == null || sequence.ExpectedList == null)
@@ -152,10 +152,9 @@ namespace brainfreeze_new.Server.Controllers
                     .Select(item => item is JsonElement jsonElement ? jsonElement.GetInt32() : (int)item)
                     .ToList();
 
-                IEnumerable<int> createdListInts =
-                   from created in sequence.CreatedList
-                   where created is JsonElement
-                   select ((JsonElement)created).GetInt32();
+                IEnumerable<int> createdListInts = sequence.CreatedList
+                    .Select(item => item is JsonElement jsonElement ? jsonElement.GetInt32() : (int)item)
+                    .ToList();
 
                 AreEqual = createdListInts.SequenceEqual(expectedListInts);
 

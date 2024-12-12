@@ -76,12 +76,9 @@ export default function Home() {
             <div className="settings-container">
                 <button className="clear-button" onClick={handleClearTokens}>
                     <i className="fa fa-times-circle" aria-hidden="true"></i>
-                    Clear Tokens
+                    Logout
                 </button>
             </div>
-            <p>
-                SessionID {localStorage.getItem("sessionId")}
-            </p>
         </div>
     );
 }
